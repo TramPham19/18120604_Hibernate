@@ -13,8 +13,8 @@
         
         <mapping resource="AccountEntity.hbm.xml"/>
         <mapping class="com.hibernate.AccountEntity"/>
-        <mapping resource="ClazzEntity.hbm.xml"/>
-        <mapping class="com.hibernate.ClazzEntity"/>
+        <mapping resource="ClassEntity.hbm.xml"/>
+        <mapping class="com.hibernate.ClassEntity"/>
         <mapping class="com.hibernate.CourseEntity"/>
         <mapping resource="CourseEntity.hbm.xml"/>
         <mapping class="com.hibernate.SemesterEntity"/>
@@ -23,6 +23,8 @@
         <mapping class="com.hibernate.SessionEntity"/>
         <mapping resource="SubjectEntity.hbm.xml"/>
         <mapping class="com.hibernate.SubjectEntity"/>
+        <mapping resource="TeacherEntity.hbm.xml"/>
+        <mapping class="com.hibernate.TeacherEntity"/>
         <!-- <property name="connection.username"/> -->
         <!-- <property name="connection.password"/> -->
 

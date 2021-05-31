@@ -12,7 +12,6 @@ public class AccountEntity {
     private String fullname;
     private String email;
     private String gender;
-    private int type;
 
     @Id
     @Column(name = "ID", nullable = false)
@@ -74,26 +73,17 @@ public class AccountEntity {
         this.gender = gender;
     }
 
-    @Basic
-    @Column(name = "type", nullable = false)
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AccountEntity that = (AccountEntity) o;
-        return id == that.id && type == that.type && Objects.equals(mssv, that.mssv) && Objects.equals(password, that.password) && Objects.equals(fullname, that.fullname) && Objects.equals(email, that.email) && Objects.equals(gender, that.gender);
+        return id == that.id && Objects.equals(mssv, that.mssv) && Objects.equals(password, that.password) && Objects.equals(fullname, that.fullname) && Objects.equals(email, that.email) && Objects.equals(gender, that.gender);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, mssv, password, fullname, email, gender, type);
+        return Objects.hash(id, mssv, password, fullname, email, gender);
     }
 }

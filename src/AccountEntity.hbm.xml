@@ -23,8 +23,5 @@
         <property name="gender">
             <column name="gender" sql-type="varchar(20)" length="20"/>
         </property>
-        <property name="type">
-            <column name="type" sql-type="int(11)"/>
-        </property>
     </class>
 </hibernate-mapping>
