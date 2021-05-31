@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="connection.url">jdbc:mysql://localhost:3306/course_registertration</property>
+        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.username">root</property>
+        <property name="connection.password"></property>
+        <property name="show_sql">true</property>
+        
+        
+        <mapping resource="AccountEntity.hbm.xml"/>
+        <mapping class="com.hibernate.AccountEntity"/>
+        <mapping resource="ClazzEntity.hbm.xml"/>
+        <mapping class="com.hibernate.ClazzEntity"/>
+        <mapping class="com.hibernate.CourseEntity"/>
+        <mapping resource="CourseEntity.hbm.xml"/>
+        <mapping class="com.hibernate.SemesterEntity"/>
+        <mapping resource="SemesterEntity.hbm.xml"/>
+        <mapping resource="SessionEntity.hbm.xml"/>
+        <mapping class="com.hibernate.SessionEntity"/>
+        <mapping resource="SubjectEntity.hbm.xml"/>
+        <mapping class="com.hibernate.SubjectEntity"/>
+        <!-- <property name="connection.username"/> -->
+        <!-- <property name="connection.password"/> -->
+
+        <!-- DB schema will be updated if needed -->
+        <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
+    </session-factory>
+</hibernate-configuration>
