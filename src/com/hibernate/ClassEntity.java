@@ -7,6 +7,7 @@ import java.util.Objects;
 @Table(name = "class", schema = "course_registertration", catalog = "")
 public class ClassEntity {
     private int id;
+    private String className;
     private int countStudent;
     private int countMen;
     private int countWomen;
@@ -51,16 +52,27 @@ public class ClassEntity {
         this.countWomen = countWomen;
     }
 
+    @Basic
+    @Column(name = "className", nullable = false)
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ClassEntity that = (ClassEntity) o;
-        return id == that.id && countStudent == that.countStudent && countMen == that.countMen && countWomen == that.countWomen;
+        return id == that.id && countStudent == that.countStudent && countMen == that.countMen && countWomen == that.countWomen && className == that.className;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, countStudent, countMen, countWomen);
+        return Objects.hash(id, countStudent, countMen, countWomen,className);
     }
 }

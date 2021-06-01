@@ -15,7 +15,11 @@ CREATE TABLE `teacher` (
                            PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-
+# BEGIN ;
+# INSERT INTO `teacher`(`ID`, `CMND`, `password`, `fullname`, `email`, `gender`) VALUES (1,'341990000','341990000','Nguyễn Văn Tài','a@gmail.com','Nam');
+# INSERT INTO `teacher`(`ID`, `CMND`, `password`, `fullname`, `email`, `gender`) VALUES (2,'341990001','341990001','Trần Thị Mai','b@gmail.com','Nữ');
+# INSERT INTO `teacher`(`ID`, `CMND`, `password`, `fullname`, `email`, `gender`) VALUES (3,'341990003','341990002','Phan Văn Duy','c@gmail.com','Nam');
+# COMMIT;
 -- ----------------------------
 -- Table structure for account
 -- ----------------------------
@@ -62,9 +66,10 @@ CREATE TABLE `semester` (
 DROP TABLE IF EXISTS `class`;
 CREATE TABLE `class` (
                          `ID` int(11) NOT NULL AUTO_INCREMENT,
-                         `countStudent` int NOT NULL,
-                         `countMen` int NOT NULL,
-                         `countWomen` int NOT NULL,
+                         `className` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+                         `countStudent` int ,
+                         `countMen` int ,
+                         `countWomen` int ,
                          PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 

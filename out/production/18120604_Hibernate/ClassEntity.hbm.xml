@@ -17,8 +17,5 @@
         <property name="countWomen">
             <column name="countWomen" sql-type="int(11)"/>
         </property>
-        <property name="className">
-            <column name="className" sql-type="varchar(20)"/>
-        </property>
     </class>
 </hibernate-mapping>

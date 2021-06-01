@@ -5,7 +5,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "teacher", schema = "course_registertration", catalog = "")
-public class TeacherEntity {
+public class TeacherEntity<operater> {
     private int id;
     private String cmnd;
     private String password;
@@ -86,4 +86,5 @@ public class TeacherEntity {
     public int hashCode() {
         return Objects.hash(id, cmnd, password, fullname, email, gender);
     }
+
 }
