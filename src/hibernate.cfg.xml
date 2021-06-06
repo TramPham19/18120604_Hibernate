@@ -11,8 +11,8 @@
         <property name="show_sql">true</property>
         
         
-        <mapping resource="AccountEntity.hbm.xml"/>
-        <mapping class="com.hibernate.AccountEntity"/>
+        <mapping resource="StudentEntity.hbm.xml"/>
+        <mapping class="com.hibernate.StudentEntity"/>
         <mapping resource="ClassEntity.hbm.xml"/>
         <mapping class="com.hibernate.ClassEntity"/>
         <mapping class="com.hibernate.CourseEntity"/>

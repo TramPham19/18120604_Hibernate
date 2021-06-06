@@ -4,9 +4,10 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "account", schema = "course_registertration", catalog = "")
-public class AccountEntity {
+@Table(name = "student", schema = "course_registertration", catalog = "")
+public class StudentEntity {
     private int id;
+    private String className;
     private String mssv;
     private String password;
     private String fullname;
@@ -73,17 +74,26 @@ public class AccountEntity {
         this.gender = gender;
     }
 
+    @Basic
+    @Column(name = "className", nullable = false)
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AccountEntity that = (AccountEntity) o;
-        return id == that.id && Objects.equals(mssv, that.mssv) && Objects.equals(password, that.password) && Objects.equals(fullname, that.fullname) && Objects.equals(email, that.email) && Objects.equals(gender, that.gender);
+        StudentEntity that = (StudentEntity) o;
+        return id == that.id && className == that.className && Objects.equals(mssv, that.mssv) && Objects.equals(password, that.password) && Objects.equals(fullname, that.fullname) && Objects.equals(email, that.email) && Objects.equals(gender, that.gender);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, mssv, password, fullname, email, gender);
+        return Objects.hash(id, className, mssv, password, fullname, email, gender);
     }
 }

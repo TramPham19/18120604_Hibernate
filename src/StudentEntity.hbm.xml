@@ -4,10 +4,13 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 
-    <class name="com.hibernate.AccountEntity" table="account" schema="course_registertration">
+    <class name="com.hibernate.StudentEntity" table="student" schema="course_registertration">
         <id name="id">
             <column name="ID" sql-type="int(11)"/>
         </id>
+        <property name="className">
+            <column name="className" sql-type="varchar(20)"/>
+        </property>
         <property name="mssv">
             <column name="MSSV" sql-type="varchar(20)" length="20"/>
         </property>

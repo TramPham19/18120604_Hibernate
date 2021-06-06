@@ -9,7 +9,7 @@ import java.util.Objects;
 public class SessionEntity {
     private int id;
     private String semesterName;
-    private int year;
+    private String year;
     private Date dateBegin;
     private Date dateEnd;
 
@@ -35,11 +35,11 @@ public class SessionEntity {
 
     @Basic
     @Column(name = "year", nullable = false)
-    public int getYear() {
+    public String getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(String year) {
         this.year = year;
     }
 

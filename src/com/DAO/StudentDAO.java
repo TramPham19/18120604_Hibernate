@@ -1,6 +1,6 @@
 package com.DAO;
 
-import com.hibernate.SemesterEntity;
+import com.hibernate.StudentEntity;
 import com.hibernate.TeacherEntity;
 import com.utils.hibernateUtils;
 import org.hibernate.HibernateException;
@@ -10,12 +10,12 @@ import org.hibernate.query.Query;
 
 import java.util.List;
 
-public class SemesterDAO {
-    public static List<SemesterEntity> getAllSemester(){
+public class StudentDAO {
+    public static List<StudentEntity> getAllStudent(){
         Session session = hibernateUtils.getSessionFactory().openSession();
-        List<SemesterEntity> acc = null;
+        List<StudentEntity> acc = null;
         try {
-            final String hql = "select st from SemesterEntity st";
+            final String hql = "select st from StudentEntity st";
             Query query = session.createQuery(hql);
             acc = query.list();
 
@@ -28,15 +28,13 @@ public class SemesterDAO {
         return acc;
     }
 
-
-    public static List<SemesterEntity> getInfoSemesterByNameYear(String semesterName, String year){
+    public static List<StudentEntity> getInfoStudentByMSSV(String MSSV){
         Session session = hibernateUtils.getSessionFactory().openSession();
-        List<SemesterEntity> acc = null;
+        List<StudentEntity> acc = null;
         try {
-            final String hql = "select st from SemesterEntity st where st.semesterName = :semesterName and st.year = :year  ";
+            final String hql = "select st from StudentEntity st where st.mssv = :name ";
             Query query = session.createQuery(hql);
-            query.setString("semesterName", semesterName);
-            query.setString("year", year);
+            query.setString("name", MSSV);
             acc = query.list();
         }catch (HibernateException ex){
             System.err.println(ex);
@@ -46,30 +44,13 @@ public class SemesterDAO {
         return  acc;
     }
 
-    public static List<SemesterEntity> getInfoSemesterByName(String semesterName){
+    public static List<StudentEntity> getInfoStudentByFullname(String name){
         Session session = hibernateUtils.getSessionFactory().openSession();
-        List<SemesterEntity> acc = null;
+        List<StudentEntity> acc = null;
         try {
-            final String hql = "select st from SemesterEntity st where st.semesterName = :semesterName ";
+            final String hql = "select st from StudentEntity st where st.fullname = :name ";
             Query query = session.createQuery(hql);
-            query.setString("semesterName", semesterName);
-            acc = query.list();
-        }catch (HibernateException ex){
-            System.err.println(ex);
-        }finally {
-            session.close();
-        }
-        return  acc;
-    }
-    
-
-    public static List<SemesterEntity> getInfoSemesterByYear(String year){
-        Session session = hibernateUtils.getSessionFactory().openSession();
-        List<SemesterEntity> acc = null;
-        try {
-            final String hql = "select st from SemesterEntity st where st.year = :year ";
-            Query query = session.createQuery(hql);
-            query.setString("year", year);
+            query.setString("name", name);
             acc = query.list();
 
         }
@@ -80,19 +61,54 @@ public class SemesterDAO {
         }
         return acc;
     }
-    
 
-    public static boolean addSemester(SemesterEntity semester){
+    public static List<StudentEntity> getInfoStudentByEmail(String email){
         Session session = hibernateUtils.getSessionFactory().openSession();
-        if(semester.getSemesterName() == null || semester.getYear() == null)
+        List<StudentEntity> acc = null;
+        try {
+            final String hql = "select st from StudentEntity st where st.email = :email ";
+            Query query = session.createQuery(hql);
+            query.setString("email", email);
+            acc = query.list();
+
+        }
+        catch (HibernateException e){
+            System.err.println(e);
+        }finally {
+            session.close();
+        }
+        return acc;
+    }
+
+    public static List<StudentEntity> getInfoStudentByGender(String gender){
+        Session session = hibernateUtils.getSessionFactory().openSession();
+        List<StudentEntity> acc = null;
+        try {
+            final String hql = "select st from StudentEntity st where st.gender = :gender ";
+            Query query = session.createQuery(hql);
+            query.setString("gender", gender);
+            acc = query.list();
+
+        }
+        catch (HibernateException e){
+            System.err.println(e);
+        }finally {
+            session.close();
+        }
+        return acc;
+    }
+
+    public static boolean addStudent(StudentEntity student){
+        Session session = hibernateUtils.getSessionFactory().openSession();
+        if(student.getMssv() == null)
             return false;
-        else if(SemesterDAO.getInfoSemesterByNameYear(semester.getSemesterName(), semester.getYear()).size()>0){
+        else if(StudentDAO.getInfoStudentByMSSV(student.getMssv()).size()>0){
             return false;
         }
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            session.save(semester);
+            session.save(student);
             transaction.commit();
         }
         catch (HibernateException e){
@@ -104,15 +120,15 @@ public class SemesterDAO {
         return true;
     }
 
-    public static  boolean updateSemester(SemesterEntity semester) {
+    public static  boolean updateStudent(StudentEntity student) {
         Session session = hibernateUtils.getSessionFactory().openSession();
-        if (SemesterDAO.getInfoSemesterByNameYear(semester.getSemesterName(), semester.getYear()).size()<=0) {
+        if (StudentDAO.getInfoStudentByMSSV(student.getMssv()) == null) {
             return false;
         }
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            session.update(semester);
+            session.update(student);
             transaction.commit();
         } catch (HibernateException e) {
             transaction.rollback();
@@ -123,16 +139,16 @@ public class SemesterDAO {
         return true;
     }
 
-    public static  boolean deleteSemester(String name,String year) {
+    public static  boolean deleteStudent(String mssv) {
         Session session = hibernateUtils.getSessionFactory().openSession();
-        List<SemesterEntity> semester = SemesterDAO.getInfoSemesterByNameYear(name,year);
-        SemesterEntity acc = null;
-        if (semester.size()<= 0) {
+        List<StudentEntity> student = StudentDAO.getInfoStudentByMSSV(mssv);
+        StudentEntity acc = null;
+        if (student.size()<= 0) {
             return false;
         }
         else{
             try {
-                acc = semester.get(semester.size()-1);
+                acc = student.get(student.size()-1);
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -7,6 +7,8 @@ import java.util.Objects;
 @Table(name = "course", schema = "course_registertration", catalog = "")
 public class CourseEntity {
     private int id;
+    private String semesterName;
+    private String year;
     private String courseId;
     private String coursetName;
     private int credits;
@@ -24,6 +26,26 @@ public class CourseEntity {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    @Basic
+    @Column(name = "semesterName", nullable = false, length = 20)
+    public String getSemesterName() {
+        return semesterName;
+    }
+
+    public void setSemesterName(String semesterName) {
+        this.semesterName = semesterName;
+    }
+
+    @Basic
+    @Column(name = "year", nullable = false)
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
     }
 
     @Basic
@@ -111,11 +133,11 @@ public class CourseEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CourseEntity that = (CourseEntity) o;
-        return id == that.id && credits == that.credits && slotMax == that.slotMax && Objects.equals(courseId, that.courseId) && Objects.equals(coursetName, that.coursetName) && Objects.equals(teacherName, that.teacherName) && Objects.equals(roomName, that.roomName) && Objects.equals(dayOfWeek, that.dayOfWeek) && Objects.equals(timeOfDay, that.timeOfDay);
+        return id == that.id && Objects.equals(year, that.year) && Objects.equals(semesterName, that.semesterName) && credits == that.credits && slotMax == that.slotMax && Objects.equals(courseId, that.courseId) && Objects.equals(coursetName, that.coursetName) && Objects.equals(teacherName, that.teacherName) && Objects.equals(roomName, that.roomName) && Objects.equals(dayOfWeek, that.dayOfWeek) && Objects.equals(timeOfDay, that.timeOfDay);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, courseId, coursetName, credits, teacherName, roomName, dayOfWeek, timeOfDay, slotMax);
+        return Objects.hash(id, semesterName, year, courseId, coursetName, credits, teacherName, roomName, dayOfWeek, timeOfDay, slotMax);
     }
 }

@@ -9,7 +9,7 @@ import java.util.Objects;
 public class SemesterEntity {
     private int id;
     private String semesterName;
-    private int year;
+    private String year;
     private Date dateBegin;
     private Date dateEnd;
     private int type;
@@ -36,11 +36,11 @@ public class SemesterEntity {
 
     @Basic
     @Column(name = "year", nullable = false)
-    public int getYear() {
+    public String getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(String year) {
         this.year = year;
     }
 
@@ -65,7 +65,7 @@ public class SemesterEntity {
     }
 
     @Basic
-    @Column(name = "type", nullable = false)
+    @Column(name = "type", nullable = true)
     public int getType() {
         return type;
     }
@@ -79,7 +79,7 @@ public class SemesterEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SemesterEntity that = (SemesterEntity) o;
-        return id == that.id && year == that.year && type == that.type && Objects.equals(semesterName, that.semesterName) && Objects.equals(dateBegin, that.dateBegin) && Objects.equals(dateEnd, that.dateEnd);
+        return id == that.id && Objects.equals(year, that.year) && type == that.type && Objects.equals(semesterName, that.semesterName) && Objects.equals(dateBegin, that.dateBegin) && Objects.equals(dateEnd, that.dateEnd);
     }
 
     @Override

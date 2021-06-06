@@ -142,7 +142,7 @@ public class TeacherDAO {
         Session session = hibernateUtils.getSessionFactory().openSession();
         List<TeacherEntity> teacher = TeacherDAO.getInfoTeacherByCMND(cmnd);
         TeacherEntity acc = null;
-        if (teacher.size()< 0) {
+        if (teacher.size()<= 0) {
             return false;
         }
         else{

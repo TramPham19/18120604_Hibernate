@@ -12,16 +12,16 @@
             <column name="semesterName" sql-type="varchar(20)" length="20"/>
         </property>
         <property name="year">
-            <column name="year" sql-type="int(11)"/>
+            <column name="year" sql-type="varchar(20)" length="20"/>
         </property>
         <property name="dateBegin">
-            <column name="dateBegin" sql-type="date" not-null="true"/>
+            <column name="dateBegin" sql-type="date" />
         </property>
         <property name="dateEnd">
-            <column name="dateEnd" sql-type="date" not-null="true"/>
+            <column name="dateEnd" sql-type="date" />
         </property>
         <property name="type">
-            <column name="type" sql-type="int(11)"/>
+            <column name="type" sql-type="int(11)" />
         </property>
     </class>
 </hibernate-mapping>

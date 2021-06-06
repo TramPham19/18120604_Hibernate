@@ -12,7 +12,7 @@
             <column name="semesterName" sql-type="varchar(20)" length="20"/>
         </property>
         <property name="year">
-            <column name="year" sql-type="int(11)"/>
+            <column name="year" sql-type="varchar(20)" length="20"/>
         </property>
         <property name="dateBegin">
             <column name="dateBegin" sql-type="date" not-null="true"/>
