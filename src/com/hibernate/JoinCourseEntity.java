@@ -7,16 +7,10 @@ import java.util.Objects;
 @Table(name = "joincourse", schema = "course_registertration", catalog = "")
 public class JoinCourseEntity {
     private int id;
-    private String mssv;
     private int id_course;
+    private int id_student;
 
-    public int getId_course() {
-        return id_course;
-    }
 
-    public void setId_course(int id_course) {
-        this.id_course = id_course;
-    }
 
     @Id
     @Column(name = "ID", nullable = false)
@@ -29,25 +23,36 @@ public class JoinCourseEntity {
     }
 
     @Basic
-    @Column(name = "MSSV", nullable = false, length = 20)
-    public String getMssv() {
-        return mssv;
+    @Column(name = "ID_student", nullable = false)
+    public int getId_course() {
+        return id_course;
     }
 
-    public void setMssv(String mssv) {
-        this.mssv = mssv;
+    public void setId_course(int id_course) {
+        this.id_course = id_course;
     }
+
+    @Basic
+    @Column(name = "ID_course", nullable = false)
+    public int getId_student() {
+        return id_student;
+    }
+
+    public void setId_student(int id_student) {
+        this.id_student = id_student;
+    }
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         JoinCourseEntity that = (JoinCourseEntity) o;
-        return id == that.id && Objects.equals(mssv, that.mssv) && id_course == that.id_course;
+        return id == that.id && id_student == that.id_student && id_course == that.id_course;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, mssv,id_course);
+        return Objects.hash(id, id_student,id_course);
     }
 }

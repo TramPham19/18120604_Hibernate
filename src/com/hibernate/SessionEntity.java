@@ -8,10 +8,12 @@ import java.util.Objects;
 @Table(name = "session", schema = "course_registertration", catalog = "")
 public class SessionEntity {
     private int id;
-    private String semesterName;
     private String year;
     private Date dateBegin;
     private Date dateEnd;
+    private int idSemester;
+
+
 
     @Id
     @Column(name = "ID", nullable = false)
@@ -24,26 +26,6 @@ public class SessionEntity {
     }
 
     @Basic
-    @Column(name = "semesterName", nullable = false, length = 20)
-    public String getSemesterName() {
-        return semesterName;
-    }
-
-    public void setSemesterName(String semesterName) {
-        this.semesterName = semesterName;
-    }
-
-    @Basic
-    @Column(name = "year", nullable = false)
-    public String getYear() {
-        return year;
-    }
-
-    public void setYear(String year) {
-        this.year = year;
-    }
-
-    @Basic
     @Column(name = "dateBegin", nullable = true)
     public Date getDateBegin() {
         return dateBegin;
@@ -51,6 +33,15 @@ public class SessionEntity {
 
     public void setDateBegin(Date dateBegin) {
         this.dateBegin = dateBegin;
+    }
+
+    @Basic
+    public int getIdSemester() {
+        return idSemester;
+    }
+
+    public void setIdSemester(int idSemester) {
+        this.idSemester = idSemester;
     }
 
     @Basic
@@ -68,11 +59,11 @@ public class SessionEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SessionEntity that = (SessionEntity) o;
-        return id == that.id && year == that.year && Objects.equals(semesterName, that.semesterName) && Objects.equals(dateBegin, that.dateBegin) && Objects.equals(dateEnd, that.dateEnd);
+        return id == that.id && year == that.year && idSemester == that.idSemester && Objects.equals(dateBegin, that.dateBegin) && Objects.equals(dateEnd, that.dateEnd);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, semesterName, year, dateBegin, dateEnd);
+        return Objects.hash(id, idSemester, year, dateBegin, dateEnd);
     }
 }

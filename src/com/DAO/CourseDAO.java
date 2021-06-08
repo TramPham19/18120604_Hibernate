@@ -2,6 +2,7 @@ package com.DAO;
 
 import com.hibernate.CourseEntity;
 import com.hibernate.SemesterEntity;
+import com.hibernate.SubjectEntity;
 import com.utils.hibernateUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -28,14 +29,27 @@ public class CourseDAO {
         return acc;
     }
 
-    public static List<CourseEntity> getInfoCourseBySemester(String semesterName, String year){
+    public static CourseEntity getInfoCourseByID(int id){
+        Session session = hibernateUtils.getSessionFactory().openSession();
+        CourseEntity acc = null;
+        try {
+            acc = (CourseEntity) session.get(CourseEntity.class,id);
+        }catch (HibernateException ex){
+            System.err.println(ex);
+        }finally {
+            session.close();
+        }
+        return  acc;
+    }
+
+    public static List<CourseEntity> getInfoCourseBySemester(int id){
         Session session = hibernateUtils.getSessionFactory().openSession();
         List<CourseEntity> acc = null;
+        SemesterEntity semester = SemesterDAO.getInfoSemesterByID(id);
         try {
-            final String hql = "select st from CourseEntity st where st.semesterName = :semesterName and st.year = :year  ";
+            final String hql = "select st from CourseEntity st where st.idSemester = :idSemester  ";
             Query query = session.createQuery(hql);
-            query.setString("semesterName", semesterName);
-            query.setString("year", year);
+            query.setInteger("idSemester",semester.getId());
             acc = query.list();
         }catch (HibernateException ex){
             System.err.println(ex);
@@ -48,10 +62,11 @@ public class CourseDAO {
     public static List<CourseEntity> getInfoCourseByName(String courseName){
         Session session = hibernateUtils.getSessionFactory().openSession();
         List<CourseEntity> acc = null;
+        List<SubjectEntity> subjectEntity = SubjectDAO.getInfoSubjectByName(courseName);
         try {
-            final String hql = "select st from CourseEntity st where st.coursetName = :courseName ";
+            final String hql = "select st from CourseEntity st where st.idSubject = :id ";
             Query query = session.createQuery(hql);
-            query.setString("courseName", courseName);
+            query.setInteger("id", subjectEntity.get(0).getId());
             acc = query.list();
         }catch (HibernateException ex){
             System.err.println(ex);

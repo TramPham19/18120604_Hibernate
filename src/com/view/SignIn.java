@@ -43,6 +43,7 @@ public class SignIn extends JFrame{
                             student.txtMSSVStudent.setText(user);
                             List<StudentEntity> studentEntitiesClassStudent = StudentDAO.getInfoStudentByMSSV(student.txtMSSVStudent.getText());
                             if(studentEntitiesClassStudent.size()>0) {
+                                student.txtMSSVStudent.setText(studentEntitiesClassStudent.get(0).getMssv());
                                 student.txtEmailStudent.setText(studentEntitiesClassStudent.get(0).getEmail());
                                 student.txtNameStudent.setText(studentEntitiesClassStudent.get(0).getFullname());
                                 student.txtPassStudent.setText(studentEntitiesClassStudent.get(0).getPassword());
@@ -57,14 +58,23 @@ public class SignIn extends JFrame{
                 } else{
                     for (TeacherEntity item : teacherEntities) {
                         if (user.compareTo(item.getCmnd()) == 0 && compareCharString(pass, item.getPassword()) == 1) {
-                            manager manager = new manager();
-                            manager.txtCMNDTeacher.setText(user);
+                            manager teacher = new manager();
+                            teacher.txtCMNDTeacher.setText(user);
                             check = true;
-                            strBuild.append("Đăng nhập thành công!");
+                            List<TeacherEntity> teacherEntitiesProfile = TeacherDAO.getInfoTeacherByCMND(teacher.txtCMNDTeacher.getText());
+                            if(teacherEntitiesProfile.size()>0) {
+                                teacher.txtProfileCMND.setText(teacherEntitiesProfile.get(0).getCmnd());
+                                teacher.txtProfileEmail.setText(teacherEntitiesProfile.get(0).getEmail());
+                                teacher.txtProfileName.setText(teacherEntitiesProfile.get(0).getFullname());
+//                                teacher.txtProfilePass.setText(teacherEntitiesProfile.get(0).getPassword());
+                                teacher.passProfile = teacherEntitiesProfile.get(0).getPassword();
+                                teacher.cmbProfileGender.setSelectedItem(teacherEntitiesProfile.get(0).getGender());
+                                strBuild.append("Đăng nhập thành công!");
 
-                            manager.setVisible(true);
-                            setVisible(false);
-                            break;
+                                teacher.setVisible(true);
+                                setVisible(false);
+                                break;
+                            }
                         }
                     }
                 }

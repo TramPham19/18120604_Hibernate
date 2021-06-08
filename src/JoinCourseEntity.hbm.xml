@@ -8,8 +8,8 @@
         <id name="id">
             <column name="ID" sql-type="int(11)"/>
         </id>
-        <property name="mssv">
-            <column name="MSSV" sql-type="varchar(20)" length="20"/>
+        <property name="id_student">
+            <column name="ID_STUDENT" sql-type="int(11)"/>
         </property>
         <property name="id_course">
             <column name="ID_COURSE" sql-type="int(11)"/>

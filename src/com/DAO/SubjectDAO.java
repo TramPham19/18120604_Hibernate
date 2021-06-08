@@ -1,5 +1,6 @@
 package com.DAO;
 
+import com.hibernate.SemesterEntity;
 import com.hibernate.SubjectEntity;
 import com.hibernate.SubjectEntity;
 import com.utils.hibernateUtils;
@@ -27,6 +28,20 @@ public class SubjectDAO {
         }
         return subj;
     }
+
+    public static SubjectEntity getInfoSubjectByID(int id){
+        Session session = hibernateUtils.getSessionFactory().openSession();
+        SubjectEntity acc = null;
+        try {
+            acc = (SubjectEntity) session.get(SubjectEntity.class,id);
+        }catch (HibernateException ex){
+            System.err.println(ex);
+        }finally {
+            session.close();
+        }
+        return  acc;
+    }
+    
     public static List<SubjectEntity> getInfoSubjectById(String id){
         Session session = hibernateUtils.getSessionFactory().openSession();
         List<SubjectEntity> subj = null;

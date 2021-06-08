@@ -1,11 +1,7 @@
 package com.view;
 
-import com.DAO.CourseDAO;
-import com.DAO.SessionDAO;
-import com.DAO.StudentDAO;
-import com.hibernate.CourseEntity;
-import com.hibernate.SessionEntity;
-import com.hibernate.StudentEntity;
+import com.DAO.*;
+import com.hibernate.*;
 import sun.java2d.pipe.TextRenderer;
 
 import javax.swing.*;
@@ -25,8 +21,9 @@ public class Student extends JFrame {
     public JComboBox cmbGenderStudent;
     private JButton btnRegistration;
     private JTable tbCourse;
-    private JButton btnSearchTeacher;
     private JButton btnShowTeacher;
+    private JButton btnSearchTeacher;
+    private JTable tbRegistation;
 
     public DefaultTableModel tableModel = new DefaultTableModel();
     String [] columnCourse = new String [] {"STT", "Mã môn học","Tên môn học", "Số tín chỉ","Giáo viên","Phòng học","Thứ","Ca học","Slot","Đăng kí"};
@@ -36,6 +33,11 @@ public class Student extends JFrame {
         List<CourseEntity> Course = new ArrayList<>();
         Course = CourseDAO.getAllCourse();
         showListCourse(Course);
+
+
+        List<JoinCourseEntity> JoinCourse = new ArrayList<>();
+//        JoinCourse = JoinCourseDAO.getAllJoinCourse(mssvStudent);
+//        showListJoinCourse(JoinCourse);
         
         add(panel1);
         setTitle("LOG IN");
@@ -60,10 +62,11 @@ public class Student extends JFrame {
         int size= list.size();
         Object [][]course=new Object[size][10];
         for (int i=0;i<size; i++){
-            course[i][0]=list.get(i).getId();
-            course[i][1]=list.get(i).getCourseId();
-            course[i][2]=list.get(i).getCoursetName();
-            course[i][3]=list.get(i).getCredits();
+            SubjectEntity subjectEntity = SubjectDAO.getInfoSubjectByID(list.get(i).getIdSubject());
+            course[i][0]= i+1;
+            course[i][1]=subjectEntity.getSubjectId();
+            course[i][2]=subjectEntity.getSubjectName();
+            course[i][3]=subjectEntity.getCredits();
             course[i][4]=list.get(i).getTeacherName();
             course[i][5]=list.get(i).getRoomName();
             course[i][6]=list.get(i).getDayOfWeek();
@@ -72,5 +75,28 @@ public class Student extends JFrame {
         }
 
         tbCourse.setModel(new DefaultTableModel(course,columnCourse));
+    }
+
+    public void showListJoinCourse(List<JoinCourseEntity> list){
+        int size= list.size();
+        Object [][]course=new Object[size][10];
+        for (int i=0;i<size; i++){
+//            SubjectEntity subjectEntity = SubjectDAO.getInfoSubjectByID(list.get(i).getId());
+//            CourseEntity courseEntity = CourseDAO.getInfoCourseByID(list.get(i).getId());
+//            course[i][0]=i+1;
+//            course[i][1]=subjectEntity.getSubjectId();
+//            course[i][2]=subjectEntity.getSubjectName();
+//            course[i][3]=subjectEntity.getCredits();
+//            course[i][4]=courseEntity.getTeacherName();
+//            course[i][5]=courseEntity.getRoomName();
+//            course[i][6]=courseEntity.getDayOfWeek();
+//            course[i][7]=courseEntity.getTimeOfDay();
+//            course[i][8]=courseEntity.getSlotMax();
+            course[i][0]=i+1;
+            course[i][1]=list.get(i).getId_student();
+            course[i][2]=list.get(i).getId_course();
+        }
+
+        tbRegistation.setModel(new DefaultTableModel(course,columnCourse));
     }
 }

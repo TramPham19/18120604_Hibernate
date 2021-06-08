@@ -8,11 +8,8 @@
         <id name="id">
             <column name="ID" sql-type="int(11)"/>
         </id>
-        <property name="semesterName">
-            <column name="semesterName" sql-type="varchar(20)" length="20"/>
-        </property>
-        <property name="year">
-            <column name="year" sql-type="varchar(20)" length="20"/>
+        <property name="idSemester">
+            <column name="IdSemester" sql-type="int(11)"/>
         </property>
         <property name="dateBegin">
             <column name="dateBegin" sql-type="date" not-null="true"/>

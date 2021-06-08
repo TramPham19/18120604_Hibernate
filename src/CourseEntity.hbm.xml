@@ -8,20 +8,11 @@
         <id name="id">
             <column name="ID" sql-type="int(11)"/>
         </id>
-        <property name="semesterName">
-            <column name="semesterName" sql-type="varchar(20)" length="20"/>
+        <property name="idSemester">
+            <column name="IdSemester" sql-type="int(11)"/>
         </property>
-        <property name="year">
-            <column name="year" sql-type="varchar(20)" length="20"/>
-        </property>
-        <property name="courseId">
-            <column name="courseID" sql-type="varchar(20)" length="20"/>
-        </property>
-        <property name="coursetName">
-            <column name="coursetName" sql-type="varchar(50)" length="50"/>
-        </property>
-        <property name="credits">
-            <column name="credits" sql-type="int(11)"/>
+        <property name="idSubject">
+            <column name="IdSubject" sql-type="int(11)"/>
         </property>
         <property name="teacherName">
             <column name="teacherName" sql-type="varchar(50)" length="50"/>

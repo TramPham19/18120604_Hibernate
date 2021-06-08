@@ -6,8 +6,7 @@ import com.toedter.calendar.JDateChooser;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -84,25 +83,54 @@ public class manager extends JFrame {
     private JButton btnSearchStudent;
     private JButton btnUpdateStudent;
     private JButton btnResetPassStudent;
-    private JPanel panelTeacher;
-    //    private JPanel JPCalendar;
+    private JButton btnLogOut;
+    private JLabel lbSemesterCourse;
+    public JTextField txtProfileCMND;
+    public JTextField txtProfileName;
+    public JTextField txtProfileEmail;
+    public JComboBox cmbProfileGender;
+    private JButton btnChangePass;
+    public JTextField txtProfilePass;
+    public JTextField txtNewPass;
+    private JButton btnChangeProfile;
+    public String passProfile;
+
 
     String [] columnTeacher = new String [] {"STT", "CMND", "Mật khẩu", "Họ tên", "Email","Giới tính"};
     String [] columnSubject = new String [] {"STT", "Mã môn học","Tên môn học","Số tín chỉ"};
-    String [] columnSemester = new String [] {"STT", "Tên học kì","Năm học","Ngày bắt đầu","Ngày kết thúc"};
+    String [] columnSemester = new String [] {"STT", "Tên học kì","Năm học","Ngày bắt đầu","Ngày kết thúc","Học kì hiện tại"};
     String [] columnClass = new String [] {"STT", "Tên lớp học","Tổng số sinh viên","Số sinh viên nam","Số sinh viên nữ"};
     String [] columnSession = new String [] {"STT", "Tên học kì","Năm học","Ngày bắt đầu","Ngày kết thúc"};
-    String [] columnCourse = new String [] {"STT", "Mã môn học","Tên môn học", "Số tín chỉ","Giáo viên","Phòng học","Thứ","Ca học","Slot"};
+    String [] columnCourse = new String [] {"STT", "Mã môn học","Tên môn học", "Số tín chỉ","Giáo viên","Phòng học","Thứ","Ca học","Slot","Năm học"};
     String [] columnStudent = new String [] {"STT","Lớp", "MSSV", "Mật khẩu", "Họ tên", "Email","Giới tính"};
 
 
     public DefaultTableModel tableModel = new DefaultTableModel();
+
+    //    private JPanel JPCalendar;
     Calendar calendar = Calendar.getInstance();
     JDateChooser dateChooserStartSemester = new JDateChooser(calendar.getTime());
     JDateChooser dateChooserEndSemester = new JDateChooser(calendar.getTime());
     JDateChooser dateChooserStartSession = new JDateChooser(calendar.getTime());
     JDateChooser dateChooserEndSession = new JDateChooser(calendar.getTime());
-    public manager(){
+    public manager() {
+
+        cmbCoursetId.setEnabled(false);
+        spCourseCredit.setEnabled(false);
+        txtProfileCMND.setEnabled(false);
+        //set comboBox
+        List<ClassEntity> tempClass = ClassDAO.getAllClass();
+        for (ClassEntity classEntity : tempClass) {
+            cmbStudentClass.addItem(classEntity.getClassName());
+        }
+
+        List<SubjectEntity> tempSubject = SubjectDAO.getAllSubject();
+        for (SubjectEntity subjectEntity : tempSubject) {
+            cmbCourseName.addItem(subjectEntity.getSubjectName());
+            cmbCoursetId.addItem(subjectEntity.getSubjectId());
+        }
+
+
         List<TeacherEntity> Teacher = new ArrayList<>();
         Teacher = TeacherDAO.getAllTeacher();
         showListTeacher(Teacher);
@@ -133,7 +161,7 @@ public class manager extends JFrame {
 
         add(panel1);
         setTitle("LOG IN");
-        setSize(1000,500);
+        setSize(1000, 500);
         List<TeacherEntity> finalTeacher = Teacher;
 
         dateChooserStartSemester.setDateFormatString("dd/MM/yyyy");
@@ -145,39 +173,38 @@ public class manager extends JFrame {
         jbStartSession.add(dateChooserStartSession);
         jbEndSession.add(dateChooserEndSession);
 
+
+        List<SemesterEntity> semester = SemesterDAO.getAllSemester();
+        for(SemesterEntity s:semester)
+            if(s.getType()==1)
+                lbSemesterCourse.setText(s.getSemesterName() + " " + s.getYear());
         // action in table teacher
         btnAddTeacher.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 StringBuilder strBuild = new StringBuilder();
-                if(txtCMNDTeacher.getText().equals(""))
-                {
+                if (txtCMNDTeacher.getText().equals("")) {
                     strBuild.append("CMND/CCCD không thể trống");
-                }
-                else {
+                } else {
                     for (int i = 0; i < finalTeacher.size(); i++) {
                         if (finalTeacher.get(i).getCmnd().compareTo(txtCMNDTeacher.getText()) == 0) {
-                            strBuild.delete(0,strBuild.length());
+                            strBuild.delete(0, strBuild.length());
                             strBuild.append("CMND/CCCD trên đã tồn tại tài khoản.");
                             break;
                         }
                     }
                 }
-                if(txtNameTeacher.getText().equals(""))
-                {
-                    strBuild.delete(0,strBuild.length());
+                if (txtNameTeacher.getText().equals("")) {
+                    strBuild.delete(0, strBuild.length());
                     strBuild.append("Họ tên không thể trống");
                 }
-                if(txtEmailTeacher.getText().equals(""))
-                {
-                    strBuild.delete(0,strBuild.length());
+                if (txtEmailTeacher.getText().equals("")) {
+                    strBuild.delete(0, strBuild.length());
                     strBuild.append("Email không thể trống");
                 }
-                if(strBuild.length()>0)
-                {
-                    JOptionPane.showMessageDialog(panel1,strBuild.toString(),"Error", JOptionPane.ERROR_MESSAGE);
-                }
-                else {
+                if (strBuild.length() > 0) {
+                    JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
                     TeacherEntity teacher = new TeacherEntity();
                     teacher.setCmnd(txtCMNDTeacher.getText());
                     teacher.setPassword(txtCMNDTeacher.getText());
@@ -186,14 +213,13 @@ public class manager extends JFrame {
                     teacher.setGender((String) cmbGender.getItemAt(cmbGender.getSelectedIndex()));
 
                     boolean result = TeacherDAO.addTeacher(teacher);
-                    if(result == true){
+                    if (result == true) {
                         strBuild.append("Thêm tài khoản giáo vụ thành công");
                         finalTeacher.add(teacher);
-                    }
-                    else{
+                    } else {
                         strBuild.append("Thêm tài khoản giáo vụ thất bại");
                     }
-                    JOptionPane.showMessageDialog(panel1,strBuild.toString(),"Success",JOptionPane.DEFAULT_OPTION);
+                    JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Success", JOptionPane.DEFAULT_OPTION);
                     showListTeacher(finalTeacher);
                 }
             }
@@ -205,11 +231,9 @@ public class manager extends JFrame {
                 int check = 0;
 
                 StringBuilder strBuild = new StringBuilder();
-                if(txtCMNDTeacher.getText().equals(""))
-                {
+                if (txtCMNDTeacher.getText().equals("")) {
                     strBuild.append("CMND/CCCD không thể trống");
-                }
-                else {
+                } else {
                     for (int i = 0; i < finalTeacher.size(); i++) {
                         if (finalTeacher.get(i).getCmnd().compareTo(txtCMNDTeacher.getText()) == 0) {
                             check = 1;
@@ -241,8 +265,7 @@ public class manager extends JFrame {
                     strBuild.delete(0, strBuild.length());
                     strBuild.append("CMND/CCCD không thể trống");
 //                   txtCMNDTeacher.setBackground(Color.red);
-                }
-                else if (TeacherDAO.getInfoTeacherByCMND(txtCMNDTeacher.getText()) == null){
+                } else if (TeacherDAO.getInfoTeacherByCMND(txtCMNDTeacher.getText()) == null) {
                     strBuild.append("Tài khoản không tồn tại");
                 } else if (txtNameTeacher.getText().equals("")) {
                     strBuild.delete(0, strBuild.length());
@@ -256,8 +279,7 @@ public class manager extends JFrame {
 
                 if (strBuild.length() > 0) {
                     JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
-                else {
+                } else {
                     List<TeacherEntity> teacherList = TeacherDAO.getInfoTeacherByCMND(txtCMNDTeacher.getText());
                     TeacherEntity teacher = teacherList.get(0);
                     teacher.setCmnd(txtCMNDTeacher.getText());
@@ -272,38 +294,54 @@ public class manager extends JFrame {
                         strBuild.append("Chỉnh sửa tài khoản giáo vụ thất bại");
                     }
                 }
-                showListTeacher (TeacherDAO.getAllTeacher());
+                showListTeacher(TeacherDAO.getAllTeacher());
             }
         });
         btnResetPassTeacher.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                List<TeacherEntity> tempTeacher = new ArrayList<>();
-                tempTeacher = TeacherDAO.getAllTeacher();
-                for(TeacherEntity teacher:tempTeacher)
-                {
-//                    teacher = TeacherDAO.getInfoTeacher(Integer.parseInt(txtCMNDTeacher.getText()));
-                    teacher.setCmnd(teacher.getCmnd());
-//                    teacher.setPassword(txtPassTeacher.getText());
-                    teacher.setFullname(teacher.getFullname());
-                    teacher.setEmail(teacher.getEmail());
-                    teacher.setGender(teacher.getGender());
-                    teacher.setPassword(teacher.getCmnd());
-                    boolean result = TeacherDAO.updateTeacher(teacher);
+                StringBuilder strBuild = new StringBuilder();
+
+                if (txtCMNDTeacher.getText().equals("")) {
+                    strBuild.append("Nhập số CMND/CCCD để reset mật khẩu cho tài khoản giáo vụ");
                 }
-                showListTeacher(TeacherDAO.getAllTeacher());
+
+                if (strBuild.length() > 0) {
+                    JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    List<TeacherEntity> tempTeacher = TeacherDAO.getAllTeacher();
+                    for (TeacherEntity teacher : tempTeacher) {
+                        if (txtCMNDTeacher.getText().compareTo(teacher.getCmnd()) == 0) {
+                            teacher.setCmnd(teacher.getCmnd());
+                            teacher.setFullname(teacher.getFullname());
+                            teacher.setEmail(teacher.getEmail());
+                            teacher.setGender(teacher.getGender());
+                            teacher.setPassword(teacher.getCmnd());
+                        }
+                        boolean result = TeacherDAO.updateTeacher(teacher);
+                        if (result == true) {
+                            strBuild.append("Reset mật khẩu tài khoản giáo vụ thành công");
+                        } else {
+                            strBuild.append("Reset mật khẩu tài khoản giáo vụ thất bại");
+                        }
+                    }
+                    showListTeacher(TeacherDAO.getAllTeacher());
+                }
             }
         });
         btnSearchTeacher.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                TeacherEntity teacher = TeacherDAO.getInfoTeacherByCMND(Integer.parseInt(txtCMNDTeacher.getText()));
-//                List<TeacherEntity> tempTeacher = new ArrayList<>();
-//                tempTeacher.add(teacher);
-//                showListTeacher(tempTeacher);
-                List<TeacherEntity> teacher = TeacherDAO.getInfoTeacherByFullname(txtNameTeacher.getText());
-                System.out.println(teacher.get(0).getFullname());
-                showListTeacher(teacher);
+                if (txtCMNDTeacher.getText().compareTo("") != 0) {
+                    List<TeacherEntity> teacher = TeacherDAO.getInfoTeacherByCMND(txtCMNDTeacher.getText());
+                    showListTeacher(teacher);
+                } else if (txtNameTeacher.getText().compareTo("") != 0) {
+                    List<TeacherEntity> teacher = TeacherDAO.getInfoTeacherByFullname(txtNameTeacher.getText());
+                    showListTeacher(teacher);
+                } else {
+                    List<TeacherEntity> teacher = TeacherDAO.getInfoTeacherByGender((String) cmbGender.getItemAt(cmbGender.getSelectedIndex()));
+                    showListTeacher(teacher);
+                }
             }
         });
         btnShowTeacher.addActionListener(new ActionListener() {
@@ -320,11 +358,9 @@ public class manager extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 List<SubjectEntity> finalSubject = SubjectDAO.getAllSubject();
                 StringBuilder strBuild = new StringBuilder();
-                if(txtIdSubject.getText().equals(""))
-                {
+                if (txtIdSubject.getText().equals("")) {
                     strBuild.append("Mã môn học không thể trống");
-                }
-                else {
+                } else {
                     for (int i = 0; i < finalSubject.size(); i++) {
                         if (finalSubject.get(i).getSubjectId().compareTo(txtIdSubject.getText()) == 0) {
                             strBuild.append("Mã môn học đã tồn tại tài khoản.");
@@ -332,30 +368,28 @@ public class manager extends JFrame {
                         }
                     }
                 }
-                if(txtNameSubject.getText().equals(""))
-                {
-                    strBuild.delete(0,strBuild.length());
+                if (txtNameSubject.getText().equals("")) {
+                    strBuild.delete(0, strBuild.length());
                     strBuild.append("Tên môn học không thể trống");
                 }
-                if(strBuild.length()>0)
-                {
-                    JOptionPane.showMessageDialog(panel1,strBuild.toString(),"Error", JOptionPane.ERROR_MESSAGE);
-                }
-                else {
+                if (strBuild.length() > 0) {
+                    JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
                     SubjectEntity subject = new SubjectEntity();
                     subject.setSubjectId(txtIdSubject.getText());
                     subject.setSubjectName(txtNameSubject.getText());
                     subject.setCredits((Integer) spCreditSubject.getValue());
 
                     boolean result = SubjectDAO.addSubject(subject);
-                    if(result == true){
+                    if (result == true) {
                         strBuild.append("Thêm môn học thành công");
-                    }
-                    else{
+                    } else {
                         strBuild.append("Thêm môn học thất bại");
                     }
-                    JOptionPane.showMessageDialog(panel1,strBuild.toString(),"Success",JOptionPane.DEFAULT_OPTION);
+                    JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Success", JOptionPane.DEFAULT_OPTION);
                     showListSubject(SubjectDAO.getAllSubject());
+                    cmbCourseName.addItem(subject.getSubjectName());
+                    cmbCoursetId.addItem(subject.getSubjectId());
                 }
             }
 
@@ -367,11 +401,9 @@ public class manager extends JFrame {
                 int check = 0;
 
                 StringBuilder strBuild = new StringBuilder();
-                if(txtIdSubject.getText().equals(""))
-                {
+                if (txtIdSubject.getText().equals("")) {
                     strBuild.append("Mã môn học không thể trống");
-                }
-                else {
+                } else {
                     for (int i = 0; i < finalSubject.size(); i++) {
                         if (finalSubject.get(i).getSubjectId().compareTo(txtIdSubject.getText()) == 0) {
                             check = 1;
@@ -403,8 +435,7 @@ public class manager extends JFrame {
                     strBuild.delete(0, strBuild.length());
                     strBuild.append("Mã môn học không thể trống");
 //                   txtCMNDTeacher.setBackground(Color.red);
-                }
-                else if (SubjectDAO.getInfoSubjectById(txtIdSubject.getText()) == null){
+                } else if (SubjectDAO.getInfoSubjectById(txtIdSubject.getText()) == null) {
                     strBuild.append("Môn học không tồn tại");
                 } else if (txtNameSubject.getText().equals("")) {
                     strBuild.delete(0, strBuild.length());
@@ -414,8 +445,7 @@ public class manager extends JFrame {
 
                 if (strBuild.length() > 0) {
                     JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
-                else {
+                } else {
                     List<SubjectEntity> subjectList = SubjectDAO.getInfoSubjectById(txtIdSubject.getText());
                     SubjectEntity subject = subjectList.get(0);
                     subject.setSubjectId(txtIdSubject.getText());
@@ -455,30 +485,27 @@ public class manager extends JFrame {
                 List<SemesterEntity> finalSemester = SemesterDAO.getAllSemester();
                 StringBuilder strBuild = new StringBuilder();
                 for (int i = 0; i < finalSemester.size(); i++) {
-                     if (finalSemester.get(i).getSemesterName().compareToIgnoreCase((String) cmbNameSemester.getItemAt(cmbNameSemester.getSelectedIndex())) == 0
-                             && finalSemester.get(i).getYear().compareTo((String) cmbYearSemester.getItemAt(cmbYearSemester.getSelectedIndex()))==0) {
-                         strBuild.append("Lớp học đã tồn tại tài khoản.");
-                         break;
-                     }
+                    if (finalSemester.get(i).getSemesterName().compareToIgnoreCase((String) cmbNameSemester.getItemAt(cmbNameSemester.getSelectedIndex())) == 0
+                            && finalSemester.get(i).getYear().compareTo((String) cmbYearSemester.getItemAt(cmbYearSemester.getSelectedIndex())) == 0) {
+                        strBuild.append("Lớp học đã tồn tại tài khoản.");
+                        break;
+                    }
                 }
-                if(strBuild.length()>0)
-                {
-                    JOptionPane.showMessageDialog(panel1,strBuild.toString(),"Error", JOptionPane.ERROR_MESSAGE);
-                }
-                else {
+                if (strBuild.length() > 0) {
+                    JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
                     SemesterEntity semesterEntity = new SemesterEntity();
                     semesterEntity.setSemesterName((String) cmbNameSemester.getItemAt(cmbNameSemester.getSelectedIndex()));
                     semesterEntity.setYear((String) cmbYearSemester.getItemAt(cmbYearSemester.getSelectedIndex()));
                     semesterEntity.setDateBegin(new java.sql.Date(dateChooserStartSemester.getDate().getTime()));
                     semesterEntity.setDateEnd(new java.sql.Date(dateChooserEndSemester.getDate().getTime()));
-                    boolean result =SemesterDAO.addSemester(semesterEntity);
-                    if(result == true){
+                    boolean result = SemesterDAO.addSemester(semesterEntity);
+                    if (result == true) {
                         strBuild.append("Thêm học kì thành công");
-                    }
-                    else{
+                    } else {
                         strBuild.append("Thêm học kì thất bại");
                     }
-                    JOptionPane.showMessageDialog(panel1,strBuild.toString(),"Success",JOptionPane.DEFAULT_OPTION);
+                    JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Success", JOptionPane.DEFAULT_OPTION);
                     showListSemester(SemesterDAO.getAllSemester());
                 }
             }
@@ -491,39 +518,19 @@ public class manager extends JFrame {
                 int check = 0;
 
                 StringBuilder strBuild = new StringBuilder();
-                    if (SemesterDAO.getInfoSemesterByNameYear((String) cmbNameSemester.getItemAt(cmbNameSemester.getSelectedIndex()),(String) cmbYearSemester.getItemAt(cmbYearSemester.getSelectedIndex())).size()==0) {
-                        strBuild.append("Học kì không tồn tại");
-                    }
-                    else {
-                        List<SemesterEntity> list = SemesterDAO.getInfoSemesterByNameYear((String) cmbNameSemester.getItemAt(cmbNameSemester.getSelectedIndex()),(String) cmbYearSemester.getItemAt(cmbYearSemester.getSelectedIndex()));
-                        boolean result = SemesterDAO.deleteSemester((String) cmbNameSemester.getItemAt(cmbNameSemester.getSelectedIndex()),(String) cmbYearSemester.getItemAt(cmbYearSemester.getSelectedIndex()));
-                        if (result == true) {
-                            strBuild.append("Xóa thành công");
+                if (SemesterDAO.getInfoSemesterByNameYear((String) cmbNameSemester.getItemAt(cmbNameSemester.getSelectedIndex()), (String) cmbYearSemester.getItemAt(cmbYearSemester.getSelectedIndex())).size() == 0) {
+                    strBuild.append("Học kì không tồn tại");
+                } else {
+                    List<SemesterEntity> list = SemesterDAO.getInfoSemesterByNameYear((String) cmbNameSemester.getItemAt(cmbNameSemester.getSelectedIndex()), (String) cmbYearSemester.getItemAt(cmbYearSemester.getSelectedIndex()));
+                    boolean result = SemesterDAO.deleteSemester((String) cmbNameSemester.getItemAt(cmbNameSemester.getSelectedIndex()), (String) cmbYearSemester.getItemAt(cmbYearSemester.getSelectedIndex()));
+                    if (result == true) {
+                        strBuild.append("Xóa thành công");
 
-                        } else {
-                            strBuild.append("Xóa thất bại");
-                        }
+                    } else {
+                        strBuild.append("Xóa thất bại");
                     }
-                    JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Thông báo", JOptionPane.DEFAULT_OPTION);
-                    showListSemester(SemesterDAO.getAllSemester());
                 }
-        });
-        btnUpdateSemester.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
-        btnSearchSemester.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                List<SemesterEntity> semesterEntities = SemesterDAO.getInfoSemesterByName((String) cmbNameSemester.getItemAt(cmbNameSemester.getSelectedIndex()));
-                showListSemester(semesterEntities);
-            }
-        });
-        btnShowSemester.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Thông báo", JOptionPane.DEFAULT_OPTION);
                 showListSemester(SemesterDAO.getAllSemester());
             }
         });
@@ -532,16 +539,18 @@ public class manager extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 List<SemesterEntity> finalSemester = SemesterDAO.getAllSemester();
                 int check = 0;
-
                 StringBuilder strBuild = new StringBuilder();
-                if (SemesterDAO.getInfoSemesterByNameYear((String) cmbNameSemester.getItemAt(cmbNameSemester.getSelectedIndex()),(String) cmbYearSemester.getItemAt(cmbYearSemester.getSelectedIndex())).size()==0) {
+                if (SemesterDAO.getInfoSemesterByNameYear((String) cmbNameSemester.getItemAt(cmbNameSemester.getSelectedIndex()), (String) cmbYearSemester.getItemAt(cmbYearSemester.getSelectedIndex())).size() == 0) {
                     strBuild.append("Học kì không tồn tại");
-                }
-                else
-                {
-                    List<SemesterEntity> semester = SemesterDAO.getInfoSemesterByNameYear((String) cmbNameSemester.getItemAt(cmbNameSemester.getSelectedIndex()),(String) cmbYearSemester.getItemAt(cmbYearSemester.getSelectedIndex()));
-                    semester.get(0).setType(1);
-                    boolean result = SemesterDAO.updateSemester(semester.get(0));
+                } else {
+                    List<SemesterEntity> semesterSet = SemesterDAO.getInfoSemesterByNameYear((String) cmbNameSemester.getItemAt(cmbNameSemester.getSelectedIndex()), (String) cmbYearSemester.getItemAt(cmbYearSemester.getSelectedIndex()));
+
+                    for (SemesterEntity semester : finalSemester) {
+                        semester.setType(0);
+                        boolean reset = SemesterDAO.updateSemester(semester);
+                    }
+                    semesterSet.get(0).setType(1);
+                    boolean result = SemesterDAO.updateSemester(semesterSet.get(0));
                     if (result == true) {
                         strBuild.append("Set thành công");
 
@@ -561,11 +570,9 @@ public class manager extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 List<ClassEntity> finalClass = ClassDAO.getAllClass();
                 StringBuilder strBuild = new StringBuilder();
-                if(txtNameClass.getText().equals(""))
-                {
+                if (txtNameClass.getText().equals("")) {
                     strBuild.append("Tên lớp không thể trống");
-                }
-                else {
+                } else {
                     for (int i = 0; i < finalClass.size(); i++) {
                         if (finalClass.get(i).getClassName().compareToIgnoreCase(txtNameClass.getText()) == 0) {
                             strBuild.append("Lớp học đã tồn tại tài khoản.");
@@ -573,24 +580,23 @@ public class manager extends JFrame {
                         }
                     }
                 }
-                if(strBuild.length()>0)
-                {
-                    JOptionPane.showMessageDialog(panel1,strBuild.toString(),"Error", JOptionPane.ERROR_MESSAGE);
-                }
-                else {
+                if (strBuild.length() > 0) {
+                    JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
                     ClassEntity classEntity = new ClassEntity();
                     classEntity.setClassName(txtNameClass.getText());
 
-                    boolean result =ClassDAO.addClass(classEntity);
-                    if(result == true){
+                    boolean result = ClassDAO.addClass(classEntity);
+                    if (result == true) {
                         strBuild.append("Thêm lớp học thành công");
-                    }
-                    else{
+                    } else {
                         strBuild.append("Thêm lớp học thất bại");
                     }
-                    JOptionPane.showMessageDialog(panel1,strBuild.toString(),"Success",JOptionPane.DEFAULT_OPTION);
+                    JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Success", JOptionPane.DEFAULT_OPTION);
                     showListClass(ClassDAO.getAllClass());
+                    cmbStudentClass.addItem(classEntity.getClassName());
                 }
+
             }
 
         });
@@ -601,11 +607,9 @@ public class manager extends JFrame {
                 int check = 0;
 
                 StringBuilder strBuild = new StringBuilder();
-                if(txtNameClass.getText().equals(""))
-                {
+                if (txtNameClass.getText().equals("")) {
                     strBuild.append("Tên lớp học không thể trống");
-                }
-                else {
+                } else {
                     for (int i = 0; i < finalClass.size(); i++) {
                         if (finalClass.get(i).getClassName().compareToIgnoreCase(txtNameClass.getText()) == 0) {
                             check = 1;
@@ -614,12 +618,16 @@ public class manager extends JFrame {
                     if (check == 0) strBuild.append("Tên lớp học không tồn tại");
                     else {
                         List<ClassEntity> list = ClassDAO.getInfoClassByName(txtNameClass.getText());
-                        boolean result = ClassDAO.deleteClass(txtNameClass.getText());
-                        if (result == true) {
-                            strBuild.append("Xóa thành công");
+                        if (list.get(0).getCountStudent() > 0)
+                            strBuild.append("Có sinh viên thuộc lớp nên không thể xóa");
+                        else {
+                            boolean result = ClassDAO.deleteClass(txtNameClass.getText());
+                            if (result == true) {
+                                strBuild.append("Xóa thành công");
 
-                        } else {
-                            strBuild.append("Xóa thất bại");
+                            } else {
+                                strBuild.append("Xóa thất bại");
+                            }
                         }
                     }
                     JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Thông báo", JOptionPane.DEFAULT_OPTION);
@@ -648,36 +656,31 @@ public class manager extends JFrame {
         btnAddStudent.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 StringBuilder strBuild = new StringBuilder();
                 List<StudentEntity> finalStudent = StudentDAO.getAllStudent();
-                if(txtMssvStudent.getText().equals(""))
-                {
+                if (txtMssvStudent.getText().equals("")) {
                     strBuild.append("MSSV không thể trống");
-                }
-                else {
+                } else {
                     for (int i = 0; i < finalStudent.size(); i++) {
                         if (finalStudent.get(i).getMssv().compareTo(txtMssvStudent.getText()) == 0) {
-                            strBuild.delete(0,strBuild.length());
+                            strBuild.delete(0, strBuild.length());
                             strBuild.append("MSSV trên đã tồn tại tài khoản.");
                             break;
                         }
                     }
                 }
-                if(txtNameStudent.getText().equals(""))
-                {
-                    strBuild.delete(0,strBuild.length());
+                if (txtNameStudent.getText().equals("")) {
+                    strBuild.delete(0, strBuild.length());
                     strBuild.append("Họ tên không thể trống");
                 }
-                if(txtEmailStudent.getText().equals(""))
-                {
-                    strBuild.delete(0,strBuild.length());
+                if (txtEmailStudent.getText().equals("")) {
+                    strBuild.delete(0, strBuild.length());
                     strBuild.append("Email không thể trống");
                 }
-                if(strBuild.length()>0)
-                {
-                    JOptionPane.showMessageDialog(panel1,strBuild.toString(),"Error", JOptionPane.ERROR_MESSAGE);
-                }
-                else {
+                if (strBuild.length() > 0) {
+                    JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
                     StudentEntity student = new StudentEntity();
                     student.setClassName((String) cmbStudentClass.getItemAt(cmbStudentClass.getSelectedIndex()));
                     student.setMssv(txtMssvStudent.getText());
@@ -687,16 +690,17 @@ public class manager extends JFrame {
                     student.setGender((String) cmbGenderStudent.getItemAt(cmbGenderStudent.getSelectedIndex()));
 
                     boolean result = StudentDAO.addStudent(student);
-                    if(result == true){
+                    if (result == true) {
                         strBuild.append("Thêm tài khoản giáo vụ thành công");
                         finalStudent.add(student);
-                    }
-                    else{
+                    } else {
                         strBuild.append("Thêm tài khoản giáo vụ thất bại");
                     }
-                    JOptionPane.showMessageDialog(panel1,strBuild.toString(),"Success",JOptionPane.DEFAULT_OPTION);
+                    JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Success", JOptionPane.DEFAULT_OPTION);
                     showListStudent(finalStudent);
                 }
+                List<ClassEntity> classEntities = ClassDAO.getAllClass();
+                showListClass(classEntities);
             }
 
         });
@@ -723,8 +727,7 @@ public class manager extends JFrame {
                     strBuild.delete(0, strBuild.length());
                     strBuild.append("MSSV không thể trống");
 //                   txtCMNDStudent.setBackground(Color.red);
-                }
-                else if (StudentDAO.getInfoStudentByMSSV(txtMssvStudent.getText()) == null){
+                } else if (StudentDAO.getInfoStudentByMSSV(txtMssvStudent.getText()) == null) {
                     strBuild.append("Tài khoản không tồn tại");
                 } else if (txtNameStudent.getText().equals("")) {
                     strBuild.delete(0, strBuild.length());
@@ -738,8 +741,7 @@ public class manager extends JFrame {
 
                 if (strBuild.length() > 0) {
                     JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
-                else {
+                } else {
                     List<StudentEntity> studentList = StudentDAO.getInfoStudentByMSSV(txtMssvStudent.getText());
                     StudentEntity student = studentList.get(0);
                     student.setMssv(txtMssvStudent.getText());
@@ -754,7 +756,7 @@ public class manager extends JFrame {
                         strBuild.append("Chỉnh sửa tài khoản giáo vụ thất bại");
                     }
                 }
-                showListStudent (StudentDAO.getAllStudent());
+                showListStudent(StudentDAO.getAllStudent());
             }
         });
         btnResetPassStudent.addActionListener(new ActionListener() {
@@ -771,23 +773,20 @@ public class manager extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 StringBuilder strBuild = new StringBuilder();
-                List<SemesterEntity> semester = SemesterDAO.getInfoSemesterByNameYear((String) cmbNameSemester.getItemAt(cmbNameSemester.getSelectedIndex()),(String) cmbYearSemester.getItemAt(cmbYearSemester.getSelectedIndex()));
-                for(int i=0;i<semester.size();i++)
-                {
-                    if (semester.get(i).getType() == 1){
+                List<SemesterEntity> semester = SemesterDAO.getAllSemester();
+                for (int i = 0; i < semester.size(); i++) {
+                    if (semester.get(i).getType() == 1) {
                         SessionEntity session = new SessionEntity();
-                        session.setSemesterName(semester.get(i).getSemesterName());
-                        session.setYear(semester.get(i).getYear());
+                        session.setIdSemester(semester.get(i).getId());
                         session.setDateBegin(new java.sql.Date(dateChooserStartSession.getDate().getTime()));
                         session.setDateEnd(new java.sql.Date(dateChooserEndSession.getDate().getTime()));
-                        boolean result =SessionDAO.addSession(session);
-                        if(result == true){
+                        boolean result = SessionDAO.addSession(session);
+                        if (result == true) {
                             strBuild.append("Thêm kì đăng kí thành công");
-                        }
-                        else{
+                        } else {
                             strBuild.append("Thêm kì đăng kí thất bại");
                         }
-                        JOptionPane.showMessageDialog(panel1,strBuild.toString(),"Thông báo",JOptionPane.DEFAULT_OPTION);
+                        JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Thông báo", JOptionPane.DEFAULT_OPTION);
                         showListSession(SessionDAO.getAllSession());
                         break;
                     }
@@ -800,15 +799,13 @@ public class manager extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 StringBuilder strBuild = new StringBuilder();
-                List<SemesterEntity> semester = SemesterDAO.getInfoSemesterByNameYear((String) cmbNameSemester.getItemAt(cmbNameSemester.getSelectedIndex()),(String) cmbYearSemester.getItemAt(cmbYearSemester.getSelectedIndex()));
-                for(int i=0;i<semester.size();i++) {
+                List<SemesterEntity> semester = SemesterDAO.getAllSemester();
+                List<SubjectEntity> subjectEntities = SubjectDAO.getInfoSubjectById((String) cmbCoursetId.getItemAt(cmbCoursetId.getSelectedIndex()));
+                for (int i = 0; i < semester.size(); i++) {
                     if (semester.get(i).getType() == 1) {
                         CourseEntity course = new CourseEntity();
-                        course.setSemesterName(semester.get(i).getSemesterName());
-                        course.setYear(semester.get(i).getYear());
-                        course.setCourseId((String) cmbCoursetId.getItemAt(cmbCoursetId.getSelectedIndex()));
-                        course.setCoursetName((String) cmbCourseName.getItemAt(cmbCourseName.getSelectedIndex()));
-                        course.setCredits((Integer) spCourseCredit.getValue());
+                        course.setIdSemester(semester.get(i).getId());
+                        course.setIdSubject(subjectEntities.get(0).getId());
                         course.setTeacherName((String) cmbTeacherCourse.getItemAt(cmbTeacherCourse.getSelectedIndex()));
                         course.setRoomName((String) cmbRoomCourse.getItemAt(cmbRoomCourse.getSelectedIndex()));
                         course.setDayOfWeek((String) cmbCourseWeek.getItemAt(cmbCourseWeek.getSelectedIndex()));
@@ -857,6 +854,74 @@ public class manager extends JFrame {
             }
         });
         // End button in table Course
+        btnLogOut.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SignIn signIn = new SignIn();
+                signIn.setVisible(true);
+                setVisible(false);
+            }
+        });
+
+        cmbCourseName.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                List<SubjectEntity> subjectEntities = SubjectDAO.getInfoSubjectByName((String) cmbCourseName.getItemAt(cmbCourseName.getSelectedIndex()));
+                cmbCoursetId.setSelectedItem(subjectEntities.get(0).getSubjectId());
+                spCourseCredit.setValue(subjectEntities.get(0).getCredits());
+            }
+        });
+        btnChangePass.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                StringBuilder strBuild = new StringBuilder();
+                List<TeacherEntity> teacherEntity = TeacherDAO.getInfoTeacherByCMND(txtCMNDTeacher.getText());
+                if(txtProfilePass.getText().compareTo(passProfile) == 0) {
+                    teacherEntity.get(0).setPassword(txtNewPass.getText());
+                    boolean result = TeacherDAO.updateTeacher(teacherEntity.get(0));
+                    if (result == true) {
+                        strBuild.append("Thay đổi mật khẩu thành công");
+                    } else {
+                        strBuild.append("Thay đổi mật khẩu thất bại");
+                    }
+                }else
+                    strBuild.append("Mật khẩu hiện tại không đúng");
+                JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Thông báo", JOptionPane.DEFAULT_OPTION);
+            }
+        });
+        btnChangeProfile.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                StringBuilder strBuild = new StringBuilder();
+                if (txtProfileName.getText().equals("")) {
+                    strBuild.append("Họ tên không thể trống");
+//                   txtNameTeacher.setBackground(Color.red);
+                } else if (txtProfileEmail.getText().equals("")) {
+                    strBuild.delete(0, strBuild.length());
+                    strBuild.append("Email không thể trống");
+//                   txtEmailTeacher.setBackground(Color.red);
+                }
+
+                if (strBuild.length() > 0) {
+                    JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    List<TeacherEntity> teacherList = TeacherDAO.getInfoTeacherByCMND(txtProfileCMND.getText());
+                    TeacherEntity teacher = teacherList.get(0);
+                    teacher.setCmnd(txtProfileCMND.getText());
+                    teacher.setFullname(txtProfileName.getText());
+                    teacher.setEmail(txtProfileEmail.getText());
+                    teacher.setGender((String) cmbProfileGender.getItemAt(cmbProfileGender.getSelectedIndex()));
+                    boolean result = TeacherDAO.updateTeacher(teacher);
+                    if (result == true) {
+                        strBuild.append("Chỉnh sửa thông tin thành công");
+                    } else {
+                        strBuild.append("Chỉnh sửa thông tin thất bại");
+                    }
+                    JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Thông báo", JOptionPane.DEFAULT_OPTION);
+
+                }
+            }
+        });
     }
 
 
@@ -885,7 +950,7 @@ public class manager extends JFrame {
         int size= list.size();
         Object [][]Subjects=new Object[size][6];
         for (int i=0;i<size; i++){
-            Subjects[i][0]=list.get(i).getId();
+            Subjects[i][0]=i+1;
             Subjects[i][1]=list.get(i).getSubjectId();
             Subjects[i][2]=list.get(i).getSubjectName();
             Subjects[i][3]=list.get(i).getCredits();
@@ -898,11 +963,12 @@ public class manager extends JFrame {
         int size= list.size();
         Object [][]semester=new Object[size][6];
         for (int i=0;i<size; i++){
-            semester[i][0]=list.get(i).getId();
+            semester[i][0]=i+1;
             semester[i][1]=list.get(i).getSemesterName();
             semester[i][2]=list.get(i).getYear();
             semester[i][3]=list.get(i).getDateBegin();
             semester[i][4]=list.get(i).getDateEnd();
+            semester[i][5]=list.get(i).getType();
         }
 
         tbSemester.setModel(new DefaultTableModel(semester,columnSemester));
@@ -912,11 +978,15 @@ public class manager extends JFrame {
         int size= list.size();
         Object [][] Class=new Object[size][6];
         for (int i=0;i<size; i++){
-            Class[i][0]=list.get(i).getId();
+            Class[i][0]=i+1;
             Class[i][1]=list.get(i).getClassName();
+            list.get(i).setCountStudent(StudentDAO.getInfoStudentByClass(list.get(i).getClassName()).size());
             Class[i][2]=list.get(i).getCountStudent();
+            list.get(i).setCountMen(StudentDAO.getInfoStudentByGenderAndClass("Nam",list.get(i).getClassName()).size());
             Class[i][3]=list.get(i).getCountMen();
+            list.get(i).setCountWomen(StudentDAO.getInfoStudentByGenderAndClass("Nữ",list.get(i).getClassName()).size());
             Class[i][4]=list.get(i).getCountWomen();
+            boolean a = ClassDAO.updateClass(list.get(i));
         }
         tbClass.setModel(new DefaultTableModel(Class,columnClass));
     }
@@ -925,9 +995,10 @@ public class manager extends JFrame {
         int size= list.size();
         Object [][]session=new Object[size][6];
         for (int i=0;i<size; i++){
-            session[i][0]=list.get(i).getId();
-            session[i][1]=list.get(i).getSemesterName();
-            session[i][2]=list.get(i).getYear();
+            SemesterEntity semesterEntity = SemesterDAO.getInfoSemesterByID(list.get(i).getIdSemester());
+            session[i][0]=i+1;
+            session[i][1]=semesterEntity.getSemesterName();
+            session[i][2]=semesterEntity.getYear();
             session[i][3]=list.get(i).getDateBegin();
             session[i][4]=list.get(i).getDateEnd();
         }
@@ -939,15 +1010,18 @@ public class manager extends JFrame {
         int size= list.size();
         Object [][]course=new Object[size][10];
         for (int i=0;i<size; i++){
-            course[i][0]=list.get(i).getId();
-            course[i][1]=list.get(i).getCourseId();
-            course[i][2]=list.get(i).getCoursetName();
-            course[i][3]=list.get(i).getCredits();
+            SubjectEntity subjectEntity = SubjectDAO.getInfoSubjectByID(list.get(i).getIdSubject());
+            SemesterEntity semesterEntity = SemesterDAO.getInfoSemesterByID(list.get(i).getIdSemester());
+            course[i][0]=i+1;
+            course[i][1]=subjectEntity.getSubjectId();
+            course[i][2]=subjectEntity.getSubjectName();
+            course[i][3]=subjectEntity.getCredits();
             course[i][4]=list.get(i).getTeacherName();
             course[i][5]=list.get(i).getRoomName();
             course[i][6]=list.get(i).getDayOfWeek();
             course[i][7]=list.get(i).getTimeOfDay();
             course[i][8]=list.get(i).getSlotMax();
+            course[i][9]=semesterEntity.getSemesterName()+" "+ semesterEntity.getYear();
         }
 
         tbCourse.setModel(new DefaultTableModel(course,columnCourse));

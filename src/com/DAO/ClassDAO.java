@@ -1,6 +1,7 @@
 package com.DAO;
 
 import com.hibernate.ClassEntity;
+import com.hibernate.StudentEntity;
 import com.hibernate.SubjectEntity;
 import com.utils.hibernateUtils;
 import org.hibernate.HibernateException;
@@ -66,6 +67,25 @@ public class ClassDAO {
         return true;
     }
 
+    public static  boolean updateClass(ClassEntity classEntity) {
+        Session session = hibernateUtils.getSessionFactory().openSession();
+        if (ClassDAO.getInfoClassByName(classEntity.getClassName()) == null) {
+            return false;
+        }
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            session.update(classEntity);
+            transaction.commit();
+        } catch (HibernateException e) {
+            transaction.rollback();
+            System.err.println(e);
+        } finally {
+            session.close();
+        }
+        return true;
+    }
+    
     public static  boolean deleteClass(String name) {
         Session session = hibernateUtils.getSessionFactory().openSession();
         List<ClassEntity> Class = ClassDAO.getInfoClassByName(name);

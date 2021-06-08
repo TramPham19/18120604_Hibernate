@@ -28,6 +28,19 @@ public class SemesterDAO {
         return acc;
     }
 
+    public static SemesterEntity getInfoSemesterByID(int id){
+        Session session = hibernateUtils.getSessionFactory().openSession();
+        SemesterEntity acc = null;
+        try {
+            acc = (SemesterEntity) session.get(SemesterEntity.class,id);
+        }catch (HibernateException ex){
+            System.err.println(ex);
+        }finally {
+            session.close();
+        }
+        return  acc;
+    }
+
 
     public static List<SemesterEntity> getInfoSemesterByNameYear(String semesterName, String year){
         Session session = hibernateUtils.getSessionFactory().openSession();

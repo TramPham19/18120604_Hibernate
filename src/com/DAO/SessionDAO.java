@@ -47,7 +47,7 @@ public class SessionDAO {
     
     public static boolean addSession(SessionEntity sessionEntity){
         Session session = hibernateUtils.getSessionFactory().openSession();
-        if(sessionEntity.getSemesterName() == null || sessionEntity.getYear() == null)
+        if(sessionEntity.getIdSemester() == 0)
             return false;
 //        else if(SemesterDAO.getInfoSemesterByNameYear(sessionEntity.getSemesterName(), sessionEntity.getYear()).size()>0){
 //            return false;
