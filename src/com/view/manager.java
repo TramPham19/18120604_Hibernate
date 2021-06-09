@@ -93,6 +93,12 @@ public class manager extends JFrame {
     public JTextField txtProfilePass;
     public JTextField txtNewPass;
     private JButton btnChangeProfile;
+    private JTextField textField1;
+    private JTextField tiêuChíMãTênTextField;
+    private JTextField txtSearchCourse;
+    private JTextField txtSearchStudent;
+    private JButton btnShowCourseOfStudent;
+    private JButton btnShowStudentOfCourse;
     public String passProfile;
 
 
@@ -103,6 +109,7 @@ public class manager extends JFrame {
     String [] columnSession = new String [] {"STT", "Tên học kì","Năm học","Ngày bắt đầu","Ngày kết thúc"};
     String [] columnCourse = new String [] {"STT", "Mã môn học","Tên môn học", "Số tín chỉ","Giáo viên","Phòng học","Thứ","Ca học","Slot","Năm học"};
     String [] columnStudent = new String [] {"STT","Lớp", "MSSV", "Mật khẩu", "Họ tên", "Email","Giới tính"};
+    String [] columnStudentOfCourse = new String [] {"STT","Lớp", "MSSV", "Họ tên", "Email","Giới tính"};
 
 
     public DefaultTableModel tableModel = new DefaultTableModel();
@@ -636,19 +643,19 @@ public class manager extends JFrame {
             }
 
         });
-        btnSearchClass.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                List<ClassEntity> classEntities = ClassDAO.getInfoClassByName(txtNameClass.getText());
-                showListClass(classEntities);
-            }
-        });
-        btnShowClass.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showListClass(ClassDAO.getAllClass());
-            }
-        });
+//        btnSearchClass.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                List<ClassEntity> classEntities = ClassDAO.getInfoClassByName(txtNameClass.getText());
+//                showListClass(classEntities);
+//            }
+//        });
+//        btnShowClass.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                showListClass(ClassDAO.getAllClass());
+//            }
+//        });
         // End button in table Class
 
 
@@ -881,6 +888,7 @@ public class manager extends JFrame {
                     boolean result = TeacherDAO.updateTeacher(teacherEntity.get(0));
                     if (result == true) {
                         strBuild.append("Thay đổi mật khẩu thành công");
+                        passProfile = txtNewPass.getText();
                     } else {
                         strBuild.append("Thay đổi mật khẩu thất bại");
                     }
@@ -919,6 +927,46 @@ public class manager extends JFrame {
                     }
                     JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Thông báo", JOptionPane.DEFAULT_OPTION);
 
+                }
+            }
+        });
+        btnShowCourseOfStudent.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                StringBuilder strBuild = new StringBuilder();
+                if (txtSearchStudent.getText().equals(""))
+                    strBuild.append("Ô tìm kiếm không thể để trống");
+                if (strBuild.length() > 0) {
+                    JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    List<StudentEntity> studentEntities = StudentDAO.getInfoStudentByMSSV(txtSearchStudent.getText());
+                    if (studentEntities.size() > 0) {
+                        List<JoinCourseEntity> joinCourseEntities = JoinCourseDAO.getAllJoinCourse(txtSearchStudent.getText());
+                        showListJoinCourse(joinCourseEntities);
+                    } else {
+                        strBuild.append("Sinh viên không tồn tại");
+                        JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Thông báo", JOptionPane.DEFAULT_OPTION);
+                    }
+                }
+            }
+        });
+        btnShowStudentOfCourse.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                StringBuilder strBuild = new StringBuilder();
+                if(txtSearchCourse.getText().equals(""))
+                    strBuild.append("Ô tìm kiếm không thể để trống");
+                if (strBuild.length() > 0) {
+                    JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    List<CourseEntity> courseEntities = CourseDAO.getInfoCourseById(txtSearchCourse.getText());
+                    if (courseEntities!=null) {
+                        List<JoinCourseEntity> joinCourseEntities = JoinCourseDAO.getAllStudentJoinCourse(txtSearchStudent.getText());
+                        showListStudentOfCourse(joinCourseEntities);
+                    } else {
+                        strBuild.append("Khóa học không tồn tại");
+                        JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Thông báo", JOptionPane.DEFAULT_OPTION);
+                    }
                 }
             }
         });
@@ -1042,4 +1090,38 @@ public class manager extends JFrame {
         tbStudent.setModel(new DefaultTableModel(students,columnStudent));
     }
 
+    public void showListJoinCourse(List<JoinCourseEntity> list) {
+        int size = list.size();
+        Object[][] course = new Object[size][10];
+        for (int i = 0; i < size; i++) {
+            CourseEntity courseEntity = CourseDAO.getInfoCourseByID(list.get(i).getId_course());
+            SubjectEntity subjectEntity = SubjectDAO.getInfoSubjectByID(courseEntity.getIdSubject());
+            course[i][0] = i + 1;
+            course[i][1] = subjectEntity.getSubjectId();
+            course[i][2] = subjectEntity.getSubjectName();
+            course[i][3] = subjectEntity.getCredits();
+            course[i][4] = courseEntity.getTeacherName();
+            course[i][5] = courseEntity.getRoomName();
+            course[i][6] = courseEntity.getDayOfWeek();
+            course[i][7] = courseEntity.getTimeOfDay();
+            course[i][8] = courseEntity.getSlotMax();
+        }
+        tbStudent.setModel(new DefaultTableModel(course, columnCourse));
+    }
+
+    public void showListStudentOfCourse(List<JoinCourseEntity> list){
+        int size= list.size();
+        Object [][]students=new Object[size][7];
+        for (int i=0;i<size; i++){
+            students[i][0]= i+1;
+            CourseEntity courseEntity = CourseDAO.getInfoCourseByID(list.get(i).getId_course());
+            StudentEntity studentEntity = StudentDAO.getInfoStudentByID(courseEntity.getId());
+            students[i][1]=studentEntity.getClassName();
+            students[i][2]=studentEntity.getMssv();
+            students[i][4]=studentEntity.getFullname();
+            students[i][5]=studentEntity.getEmail();
+            students[i][6]=studentEntity.getGender();
+        }
+        tbCourse.setModel(new DefaultTableModel(students,columnStudentOfCourse));
+    }
 }

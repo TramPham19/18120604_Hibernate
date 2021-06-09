@@ -42,6 +42,44 @@ public class CourseDAO {
         return  acc;
     }
 
+    public static List<CourseEntity> getInfoCourseById(String courseId){
+        Session session = hibernateUtils.getSessionFactory().openSession();
+        List<CourseEntity> acc = null;
+        List<SubjectEntity> subjectEntity = SubjectDAO.getInfoSubjectById(courseId);
+        if(subjectEntity.size()<=0)
+            return acc;
+        else {
+            try {
+                final String hql = "select st from CourseEntity st where st.idSubject = :id ";
+                Query query = session.createQuery(hql);
+                query.setInteger("id", subjectEntity.get(0).getId());
+                acc = query.list();
+            } catch (HibernateException ex) {
+                System.err.println(ex);
+            } finally {
+                session.close();
+            }
+            return acc;
+        }
+    }
+
+//    public static List<CourseEntity> getInfoStudentOfCourseByIdCourse(String courseId){
+//        Session session = hibernateUtils.getSessionFactory().openSession();
+//        List<CourseEntity> acc = null;
+//        List<SubjectEntity> subjectEntity = SubjectDAO.getInfoSubjectById(courseId);
+//        try {
+//            final String hql = "select st from CourseEntity st where st.idSubject = :id ";
+//            Query query = session.createQuery(hql);
+//            query.setInteger("id", subjectEntity.get(0).getId());
+//            acc = query.list();
+//        }catch (HibernateException ex){
+//            System.err.println(ex);
+//        }finally {
+//            session.close();
+//        }
+//        return  acc;
+//    }
+    
     public static List<CourseEntity> getInfoCourseBySemester(int id){
         Session session = hibernateUtils.getSessionFactory().openSession();
         List<CourseEntity> acc = null;

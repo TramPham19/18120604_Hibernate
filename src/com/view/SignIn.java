@@ -4,7 +4,6 @@ import com.DAO.StudentDAO;
 import com.DAO.TeacherDAO;
 import com.hibernate.StudentEntity;
 import com.hibernate.TeacherEntity;
-import sun.java2d.pipe.TextRenderer;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -24,7 +23,7 @@ public class SignIn extends JFrame{
     {
         add(panel1);
         setTitle("LOG IN");
-        setSize(500,350);
+        setSize(500,300);
         ĐĂNGNHẬPButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -40,13 +39,15 @@ public class SignIn extends JFrame{
                         if (user.compareTo(item.getMssv()) == 0 && compareCharString(pass, item.getPassword()) == 1) {
                             Student student = new Student();
                             check = true;
-                            student.txtMSSVStudent.setText(user);
-                            List<StudentEntity> studentEntitiesClassStudent = StudentDAO.getInfoStudentByMSSV(student.txtMSSVStudent.getText());
+                            student.txtMSSV.setText(user);
+                            List<StudentEntity> studentEntitiesClassStudent = StudentDAO.getInfoStudentByMSSV(student.txtMSSV.getText());
                             if(studentEntitiesClassStudent.size()>0) {
-                                student.txtMSSVStudent.setText(studentEntitiesClassStudent.get(0).getMssv());
-                                student.txtEmailStudent.setText(studentEntitiesClassStudent.get(0).getEmail());
-                                student.txtNameStudent.setText(studentEntitiesClassStudent.get(0).getFullname());
-                                student.txtPassStudent.setText(studentEntitiesClassStudent.get(0).getPassword());
+                                student.txtMSSV.setText(studentEntitiesClassStudent.get(0).getMssv());
+                                student.mssv = studentEntitiesClassStudent.get(0).getMssv();
+                                student.txtEmail.setText(studentEntitiesClassStudent.get(0).getEmail());
+                                student.txtName.setText(studentEntitiesClassStudent.get(0).getFullname());
+//                                student.txtPass.setText(studentEntitiesClassStudent.get(0).getPassword());
+                                student.passProfileStudent = studentEntitiesClassStudent.get(0).getPassword();
                                 student.cmbGenderStudent.setSelectedItem(studentEntitiesClassStudent.get(0).getGender());
                                 strBuild.append("Đăng nhập thành công!");
                                 student.setVisible(true);

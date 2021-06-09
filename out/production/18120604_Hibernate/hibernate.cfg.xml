@@ -25,6 +25,8 @@
         <mapping class="com.hibernate.SubjectEntity"/>
         <mapping resource="TeacherEntity.hbm.xml"/>
         <mapping class="com.hibernate.TeacherEntity"/>
+        <mapping resource="JoinCourseEntity.hbm.xml"/>
+        <mapping class="com.hibernate.JoinCourseEntity"/>
         <!-- <property name="connection.username"/> -->
         <!-- <property name="connection.password"/> -->
 
