@@ -10,10 +10,10 @@ public class Main {
 
     public static void main(String[] args) {
         
-//        SignIn signIn = new SignIn();
-//        signIn.setVisible(true);
-        manager signIn = new manager();
+        SignIn signIn = new SignIn();
         signIn.setVisible(true);
+//        manager signIn = new manager();
+//        signIn.setVisible(true);
 //        Student signIn = new Student();
 //        signIn.setVisible(true);
     }

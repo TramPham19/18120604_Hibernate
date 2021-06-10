@@ -24,13 +24,14 @@ public class Student extends JFrame {
     private JTable tbRegistation;
     private JButton btnLogOutStudent;
     private JTextField txtNewProfileStudent;
-    private JButton button1;
     private JPanel ListUserRegistation;
+    private JButton btnDeleteRegistration;
     public String passProfileStudent;
     public String mssv;
 
     public DefaultTableModel tableModel = new DefaultTableModel();
-    String [] columnCourse = new String [] {"STT", "Mã môn học","Tên môn học", "Số tín chỉ","Giáo viên","Phòng học","Thứ","Ca học","Slot","Đăng kí"};
+    String [] columnCourse = new String [] {"STT", "Mã môn học","Tên môn học", "Số tín chỉ","Giáo viên","Phòng học","Thứ","Ca học","Slot","Slot đã đăng kí","Đăng kí"};
+    String [] columnCourseMy = new String [] {"STT", "Mã môn học","Tên môn học", "Số tín chỉ","Giáo viên","Phòng học","Thứ","Ca học","Slot","Hủy đăng kí"};
 
     public Student(){
 
@@ -42,7 +43,7 @@ public class Student extends JFrame {
         
         add(panel1);
         setTitle("LOG IN");
-        setSize(1000,500);
+        setSize(1500,1000);
 
         btnRegistration.addActionListener(new ActionListener() {
             @Override
@@ -65,18 +66,25 @@ public class Student extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 StringBuilder strBuild = new StringBuilder();
                 List<StudentEntity> studentEntity = StudentDAO.getInfoStudentByMSSV(txtMSSV.getText());
-                if(txtPass.getText().compareTo(passProfileStudent) == 0) {
-                    studentEntity.get(0).setPassword(txtNewProfileStudent.getText());
-                    boolean result = StudentDAO.updateStudent(studentEntity.get(0));
-                    if (result == true) {
-                        strBuild.append("Thay đổi mật khẩu thành công");
-                        passProfileStudent = txtNewProfileStudent.getText();
-                    } else {
-                        strBuild.append("Thay đổi mật khẩu thất bại");
-                    }
-                }else
-                    strBuild.append("Mật khẩu hiện tại không đúng");
-                JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Thông báo", JOptionPane.DEFAULT_OPTION);
+                if (txtNewProfileStudent.getText().equals("")) {
+                    strBuild.append("Nhập mật khẩu mới");
+                }
+                if (strBuild.length() > 0) {
+                    JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    if (txtPass.getText().compareTo(passProfileStudent) == 0) {
+                        studentEntity.get(0).setPassword(txtNewProfileStudent.getText());
+                        boolean result = StudentDAO.updateStudent(studentEntity.get(0));
+                        if (result == true) {
+                            strBuild.append("Thay đổi mật khẩu thành công");
+                            passProfileStudent = txtNewProfileStudent.getText();
+                        } else {
+                            strBuild.append("Thay đổi mật khẩu thất bại");
+                        }
+                    } else
+                        strBuild.append("Mật khẩu hiện tại không đúng");
+                    JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Thông báo", JOptionPane.DEFAULT_OPTION);
+                }
             }
         });
         btnChangeProfileStudent.addActionListener(new ActionListener() {
@@ -112,6 +120,7 @@ public class Student extends JFrame {
                 }
             }
         });
+
         ListUserRegistation.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentMoved(ComponentEvent e) {
@@ -121,55 +130,99 @@ public class Student extends JFrame {
                 showListJoinCourse(JoinCourse);
             }
         });
-        tbCourse.addMouseListener(new MouseAdapter() {
+
+        btnRegistration.addActionListener(new ActionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
+            public void actionPerformed(ActionEvent e) {
                 StringBuilder strBuild = new StringBuilder();
                 List<JoinCourseEntity> joinList = JoinCourseDAO.getAllJoinCourse(txtMSSV.getText());
                 List<StudentEntity> studentList = StudentDAO.getInfoStudentByMSSV(txtMSSV.getText());
                 List<CourseEntity> course = CourseDAO.getAllCourse();
-                JoinCourseEntity join = new JoinCourseEntity();
-                int temp=tbCourse.getSelectedRow();
-                join.setId_course(course.get(temp).getId());
-                join.setId_student(studentList.get(0).getId());
-                boolean result = JoinCourseDAO.addJoinCourse(join);
-                if (result == true) {
-                    strBuild.append("Đăng kí khóa học thành công");
-                } else {
-                    strBuild.append("Đăng kí khóa học thất bại");
+                int countRegister=0;
+
+                //Đếm số cột sv muôn đăng kí
+                for (int i = 0; i < tbCourse.getRowCount(); i++) {
+                    boolean check = Boolean.valueOf(tbCourse.getValueAt(i, 10).toString());
+                    if (check == true) {
+                        countRegister++;
+                    }
+                }
+
+                boolean checkTimeCourse = true; //kiểm tra 2 khóa học có trùng giờ không
+//                int temp = tbCourse.getSelectedRow();
+
+                for (int i = 0; i < tbCourse.getRowCount(); i++) {
+
+                    if(joinList.size() + countRegister <=8) {
+                        JoinCourseEntity join = new JoinCourseEntity();
+//                        System.out.println(temp);
+                        boolean check = Boolean.valueOf(tbCourse.getValueAt(i, 10).toString());
+
+                        if (check == true) {
+                            join.setId_course(course.get(i).getId());
+                            join.setId_student(studentList.get(0).getId());
+
+                            for (JoinCourseEntity c : joinList)
+                                if (checkTimeTwoCourse(course.get(i).getId(), c.getId_course()) == false) {
+                                    checkTimeCourse = false;
+                                    CourseEntity temp = CourseDAO.getInfoCourseByID(c.getId_course());
+                                    SubjectEntity sub = SubjectDAO.getInfoSubjectByID(temp.getIdSubject());
+                                    strBuild.append("Khóa học "+ sub.getSubjectName() + ": Không thể đăng kí 2 giờ trùng nhau"+ "\n");
+                                    break;
+                                }
+                            if(checkTimeCourse == true){
+                                boolean result = JoinCourseDAO.addJoinCourse(join);
+                                CourseEntity temp = CourseDAO.getInfoCourseByID(join.getId_course());
+                                SubjectEntity sub = SubjectDAO.getInfoSubjectByID(temp.getIdSubject());
+                                if(result==true)
+                                    strBuild.append("Khóa học: "+sub.getSubjectName() +" đăng kí thành công "+ "\n");
+                            }
+                        }
+                    }
+                    else{
+                        strBuild.append("Chỉ được đăng kí tối đa 8 môn ");
+                        break;
+                    }
+
                 }
                 JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Thông báo", JOptionPane.DEFAULT_OPTION);
                 showListJoinCourse(JoinCourseDAO.getAllJoinCourse(txtMSSV.getText()));
+                showListCourse(CourseDAO.getAllCourse());
             }
         });
-        tbRegistation.addMouseListener(new MouseAdapter() {
+
+        btnDeleteRegistration.addActionListener(new ActionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
+            public void actionPerformed(ActionEvent e) {
                 StringBuilder strBuild = new StringBuilder();
                 List<JoinCourseEntity> joinList = JoinCourseDAO.getAllJoinCourse(txtMSSV.getText());
                 List<StudentEntity> studentList = StudentDAO.getInfoStudentByMSSV(txtMSSV.getText());
 //                List<CourseEntity> course = CourseDAO.getAllCourse();
-                JoinCourseEntity join = new JoinCourseEntity();
-                int temp = tbRegistation.getSelectedRow();
-                if (temp > -1) {
-                    join.setId_course(joinList.get(temp).getId_course());
-                    join.setId_student(studentList.get(0).getId());
-                    List<JoinCourseEntity> deleteJoin = JoinCourseDAO.getInfoJoinCourseByStudentandCourseID(join.getId_student(),join.getId_course());
-                    System.out.println(join.getId_student());
-                    System.out.println(join.getId_course());
-                    if(deleteJoin!=null) {
-                        boolean result = JoinCourseDAO.deleteJoinCourse(deleteJoin.get(0).getId());
-                        if (result == true) {
-                            strBuild.append("Xóa khóa học đã đăng kí thành công");
-                        } else {
-                            strBuild.append("Xóa khóa học đã đăng kí thất bại");
+                for (int i = 0; i < tbRegistation.getRowCount(); i++) {
+                        boolean check = Boolean.valueOf(tbRegistation.getValueAt(i, 9).toString());
+                        if (check == true) {
+                            JoinCourseEntity join = new JoinCourseEntity();
+                            join.setId_course(joinList.get(i).getId_course());
+                            System.out.println(joinList.get(i).getId_course());
+                            join.setId_student(studentList.get(0).getId());
+                            System.out.println(studentList.get(0).getId());
+
+                            List<JoinCourseEntity> deleteJoin = JoinCourseDAO.getInfoJoinCourseByStudentandCourseID(join.getId_student(),join.getId_course());
+                            if(deleteJoin.size()>0) {
+                                CourseEntity temp = CourseDAO.getInfoCourseByID(join.getId_course());
+                                SubjectEntity sub = SubjectDAO.getInfoSubjectByID(temp.getIdSubject());
+                                boolean result = JoinCourseDAO.deleteJoinCourse(deleteJoin.get(0).getId());
+                                if (result == true) {
+                                    strBuild.append(sub.getSubjectName() + " : Xóa đăng kí thành công" + "\n");
+                                } else {
+                                    strBuild.append(sub.getSubjectName() +"Xóa đăng kí thất bại" + "\n");
+                                }
+                            }
                         }
-                        JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Thông báo", JOptionPane.DEFAULT_OPTION);
-                        showListJoinCourse(JoinCourseDAO.getAllJoinCourse(txtMSSV.getText()));
-                    }
                 }
+                JOptionPane.showMessageDialog(panel1, strBuild.toString(), "Thông báo", JOptionPane.DEFAULT_OPTION);
+                showListJoinCourse(JoinCourseDAO.getAllJoinCourse(txtMSSV.getText()));
+                showListCourse(CourseDAO.getAllCourse());
             }
         });
     }
@@ -183,29 +236,47 @@ public class Student extends JFrame {
 
     public void showListCourse(List<CourseEntity> list){
         int size= list.size();
-        Object [][]course=new Object[size][10];
+        Object [][]course=new Object[size][11];
+        int j=0;
         for (int i=0;i<size; i++){
             SubjectEntity subjectEntity = SubjectDAO.getInfoSubjectByID(list.get(i).getIdSubject());
-            course[i][0]= i+1;
-            course[i][1]=subjectEntity.getSubjectId();
-            course[i][2]=subjectEntity.getSubjectName();
-            course[i][3]=subjectEntity.getCredits();
-            course[i][4]=list.get(i).getTeacherName();
-            course[i][5]=list.get(i).getRoomName();
-            course[i][6]=list.get(i).getDayOfWeek();
-            course[i][7]=list.get(i).getTimeOfDay();
-            course[i][8]=list.get(i).getSlotMax();
-//            course[i][9]=list.get(i).getSlotMax();
+            SemesterEntity semesterEntity = SemesterDAO.getInfoSemesterByID(list.get(i).getIdSemester());
+            if(semesterEntity.getType()==1) {
+                course[i][0] = j + 1;
+                course[i][1] = subjectEntity.getSubjectId();
+                course[i][2] = subjectEntity.getSubjectName();
+                course[i][3] = subjectEntity.getCredits();
+                course[i][4] = list.get(i).getTeacherName();
+                course[i][5] = list.get(i).getRoomName();
+                course[i][6] = list.get(i).getDayOfWeek();
+                course[i][7] = list.get(i).getTimeOfDay();
+                course[i][8] = list.get(i).getSlotMax();
+                course[i][9] = JoinCourseDAO.getAllStudentJoinCourse(subjectEntity.getSubjectId()).size();
+                course[i][10] = false;
+                j++;
             }
+        }
 
 
         tbCourse.setModel(new DefaultTableModel(course,columnCourse) {Class[] types = new Class[]{
                 java.lang.Integer.class, java.lang.String.class,  java.lang.String.class,
                 java.lang.String.class, java.lang.String.class, java.lang.String.class,
-                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Boolean.class};
+                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Boolean.class};
             public  Class getColumnClass(int columnIndex){return  types[columnIndex];}
         }
         );
+    }
+
+    public boolean checkTimeTwoCourse(int idCourse1, int idCourse2)
+    {
+        CourseEntity course1 = CourseDAO.getInfoCourseByID(idCourse1);
+        CourseEntity course2 = CourseDAO.getInfoCourseByID(idCourse2);
+        if(course1 == null || course2 == null)
+            return false;
+        if(course1.getTimeOfDay().compareTo(course2.getTimeOfDay())==0 && course1.getDayOfWeek().compareTo(course2.getDayOfWeek())==0)
+            return false;
+        else
+            return true;
     }
 
     public void showListJoinCourse(List<JoinCourseEntity> list){
@@ -223,9 +294,11 @@ public class Student extends JFrame {
             course[i][6]=courseEntity.getDayOfWeek();
             course[i][7]=courseEntity.getTimeOfDay();
             course[i][8]=courseEntity.getSlotMax();
+            course[i][9]=false;
+
         }
 
-        tbRegistation.setModel(new DefaultTableModel(course,columnCourse) {Class[] types = new Class[]{
+        tbRegistation.setModel(new DefaultTableModel(course,columnCourseMy) {Class[] types = new Class[]{
                 java.lang.Integer.class, java.lang.String.class,  java.lang.String.class,
                 java.lang.String.class, java.lang.String.class, java.lang.String.class,
                 java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Boolean.class};

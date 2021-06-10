@@ -97,21 +97,25 @@ public class CourseDAO {
         return  acc;
     }
 
-    public static List<CourseEntity> getInfoCourseByName(String courseName){
+    public static List<CourseEntity> getInfoCourseByName(String courseName) {
         Session session = hibernateUtils.getSessionFactory().openSession();
         List<CourseEntity> acc = null;
         List<SubjectEntity> subjectEntity = SubjectDAO.getInfoSubjectByName(courseName);
-        try {
-            final String hql = "select st from CourseEntity st where st.idSubject = :id ";
-            Query query = session.createQuery(hql);
-            query.setInteger("id", subjectEntity.get(0).getId());
-            acc = query.list();
-        }catch (HibernateException ex){
-            System.err.println(ex);
-        }finally {
-            session.close();
+        if (subjectEntity.size() < 0)
+            return null;
+        else {
+            try {
+                final String hql = "select st from CourseEntity st where st.idSubject = :id ";
+                Query query = session.createQuery(hql);
+                query.setInteger("id", subjectEntity.get(0).getId());
+                acc = query.list();
+            } catch (HibernateException ex) {
+                System.err.println(ex);
+            } finally {
+                session.close();
+            }
+            return acc;
         }
-        return  acc;
     }
 //
 //
@@ -202,5 +206,25 @@ public class CourseDAO {
         }
         return true;
     }
-    
+
+    public static boolean DeleteCourse2(int id) {
+        Session session = hibernateUtils.getSessionFactory().openSession();
+        CourseEntity c = CourseDAO.getInfoCourseByID(id);
+        if (c == null) {
+            return false;
+        }
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            session.delete(c);
+            transaction.commit();
+        } catch (HibernateException ex) {
+//Log the exception
+            transaction.rollback();
+            System.err.println(ex);
+        } finally {
+            session.close();
+        }
+        return true;
+    }
 }
