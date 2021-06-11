@@ -171,24 +171,34 @@ public class Student extends JFrame {
                             join.setId_course(course.get(i).getId());
                             join.setId_student(studentList.get(0).getId());
                             join.setDayRegistration(LocalDateTime.now());
-                            if (checkTimeRegistInSession(semesterEntity, LocalDateTime.now()) == true) {
-                                for (JoinCourseEntity c : joinList)
-                                    if (checkTimeTwoCourse(course.get(i).getId(), c.getId_course()) == false) {
-                                        checkTimeCourse = false;
-                                        CourseEntity temp = CourseDAO.getInfoCourseByID(c.getId_course());
-                                        SubjectEntity sub = SubjectDAO.getInfoSubjectByID(temp.getIdSubject());
-                                        strBuild.append("Khóa học " + sub.getSubjectName() + ": Không thể đăng kí 2 giờ trùng nhau" + "\n");
-                                        break;
+                            CourseEntity courseEntity = CourseDAO.getInfoCourseByID(join.getId_course());
+                            SubjectEntity subjectEntity = SubjectDAO.getInfoSubjectByID(courseEntity.getIdSubject());
+                            if (JoinCourseDAO.getAllStudentJoinCourseId(courseEntity.getId()).size() == courseEntity.getSlotMax())
+                                strBuild.append("Không còn slot" + "\n");
+                            else {
+                                if (checkTimeRegistInSession(semesterEntity, LocalDateTime.now()) == true) {
+                                    for (JoinCourseEntity c : joinList) {
+                                        if (checkTimeTwoCourse(course.get(i).getId(), c.getId_course()) == false) {
+                                            checkTimeCourse = false;
+                                            CourseEntity temp = CourseDAO.getInfoCourseByID(c.getId_course());
+                                            SubjectEntity sub = SubjectDAO.getInfoSubjectByID(temp.getIdSubject());
+                                            strBuild.append("Khóa học " + sub.getSubjectName() + ": Không thể đăng kí 2 giờ trùng nhau" + "\n");
+                                            break;
+                                        }
+                                        System.out.println(course.get(i).getTimeOfDay());
+                                        System.out.println(CourseDAO.getInfoCourseByID(c.getId_course()).getTimeOfDay());
                                     }
-                                if (checkTimeCourse == true) {
-                                    boolean result = JoinCourseDAO.addJoinCourse(join);
-                                    CourseEntity temp = CourseDAO.getInfoCourseByID(join.getId_course());
-                                    SubjectEntity sub = SubjectDAO.getInfoSubjectByID(temp.getIdSubject());
-                                    if (result == true)
-                                        strBuild.append("Khóa học: " + sub.getSubjectName() + " đăng kí thành công " + "\n");
+                                    System.out.println(checkTimeCourse);
+                                    if (checkTimeCourse == true) {
+                                        boolean result = JoinCourseDAO.addJoinCourse(join);
+                                        CourseEntity temp = CourseDAO.getInfoCourseByID(join.getId_course());
+                                        SubjectEntity sub = SubjectDAO.getInfoSubjectByID(temp.getIdSubject());
+                                        if (result == true)
+                                            strBuild.append("Khóa học: " + sub.getSubjectName() + " đăng kí thành công " + "\n");
+                                    }
+                                } else {
+                                    strBuild.append("Hết hạn đăng kí " + "\n");
                                 }
-                            } else {
-                                strBuild.append("Hết hạn đăng kí " + "\n");
                             }
                         }
                     } else {
@@ -210,6 +220,7 @@ public class Student extends JFrame {
                 List<JoinCourseEntity> joinList = JoinCourseDAO.getAllJoinCourse(txtMSSV.getText());
                 List<StudentEntity> studentList = StudentDAO.getInfoStudentByMSSV(txtMSSV.getText());
                 List<SemesterEntity> semester = SemesterDAO.getAllSemester();
+
                 SemesterEntity semesterEntity = new SemesterEntity();
                 for (SemesterEntity s : semester)
                     if (s.getType() == 1)
@@ -233,7 +244,7 @@ public class Student extends JFrame {
                                     strBuild.append(sub.getSubjectName() + "Xóa đăng kí thất bại" + "\n");
                                 }
                             }
-                        }else{
+                        } else {
                             strBuild.append("Hết hạn đăng kí " + "\n");
                         }
                     }
@@ -269,7 +280,7 @@ public class Student extends JFrame {
                 course[i][6] = list.get(i).getDayOfWeek();
                 course[i][7] = list.get(i).getTimeOfDay();
                 course[i][8] = list.get(i).getSlotMax();
-                course[i][9] = JoinCourseDAO.getAllStudentJoinCourse(subjectEntity.getSubjectId()).size();
+                course[i][9] = JoinCourseDAO.getAllStudentJoinCourseId(list.get(i).getId()).size();
                 course[i][10] = false;
                 j++;
             }
@@ -335,8 +346,6 @@ public class Student extends JFrame {
     public boolean checkTimeRegistInSession(SemesterEntity s, LocalDateTime t) {
         List<SessionEntity> sessionEntities = SessionDAO.getInfoSessionByIdSemester(s.getId());
         for (SessionEntity session : sessionEntities) {
-            System.out.println(session.getDateBegin().toLocalDate().compareTo(t.toLocalDate()));
-            System.out.println(session.getDateEnd().toLocalDate().compareTo(t.toLocalDate()));
             if (session.getDateBegin().toLocalDate().compareTo(t.toLocalDate()) <0
                     && session.getDateEnd().toLocalDate().compareTo(t.toLocalDate()) >0) {
                 return true;

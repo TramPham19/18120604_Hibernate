@@ -17,7 +17,7 @@ CREATE TABLE `teacher` (
 
 BEGIN ;
 INSERT INTO `teacher`(`ID`, `CMND`, `password`, `fullname`, `email`, `gender`) VALUES (1,'341990000','341990000','Nguyễn Văn Tài','a@gmail.com','Nam');
-INSERT INTO `teacher`(`ID`, `CMND`, `password`, `fullname`, `email`, `gender`) VALUES (2,'341990001','341990001','Trần Thị Mai','b@gmail.com','Nữ');
+INSERT INTO `teacher`(`ID`, `CMND`, `password`, `fullname`, `email`, `gender`) VALUES (2,'341990001','123','Trần Thị Mai','b@gmail.com','Nữ');
 INSERT INTO `teacher`(`ID`, `CMND`, `password`, `fullname`, `email`, `gender`) VALUES (3,'341990002','341990002','Phan Văn Duy','c@gmail.com','Nam');
 COMMIT;
 -- ----------------------------
@@ -38,10 +38,10 @@ ALTER TABLE `student`
     ADD FOREIGN KEY (`className`) REFERENCES `class`(`className`);
 
 BEGIN ;
-INSERT INTO `student` VALUES (1,'18CTT1','20120001','20120001','Nguyễn Văn Thanh','a@gmail.com','Nam');
-INSERT INTO `student` VALUES (2,'18CTT2','20120002','20120002','Trần Thị Lan','b@gmail.com','Nữ');
-INSERT INTO `student` VALUES (3,'18CTT3','20120003','20120003','Phan Văn Hưng','c@gmail.com','Nam');
-INSERT INTO `student` VALUES (4,'19CTT1','20120004','20120004','LeLush','le@gmail.com','Nam');
+INSERT INTO `student` VALUES (1,'18CTT1','20120001','123','Nguyễn Văn Thanh','a@gmail.com','Nam');
+INSERT INTO `student` VALUES (2,'18CTT2','20120002','123','Trần Thị Lan','b@gmail.com','Nữ');
+INSERT INTO `student` VALUES (3,'18CTT3','20120003','123','Phan Văn Hưng','c@gmail.com','Nam');
+INSERT INTO `student` VALUES (4,'19CTT1','20120004','123','LeLush','le@gmail.com','Nam');
 INSERT INTO `student` VALUES (5,'19CTT2','20120005','20120005','Trần Thị Ngọc','1@gmail.com','Nữ');
 INSERT INTO `student` VALUES (6,'19CTT3','20120006','20120006','Vũ Văn Minh','2@gmail.com','Nam');
 INSERT INTO `student` VALUES (7,'20CTT1','20120007','20120007','Nguyễn Văn Thành','3@gmail.com','Nam');
