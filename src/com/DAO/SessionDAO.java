@@ -1,5 +1,6 @@
 package com.DAO;
 
+import com.hibernate.CourseEntity;
 import com.hibernate.SemesterEntity;
 import com.hibernate.SessionEntity;
 import com.utils.hibernateUtils;
@@ -28,14 +29,30 @@ public class SessionDAO {
         return acc;
     }
 
-    public static List<SessionEntity> getInfoSessionByNameYear(String semesterName, String year){
+//    public static List<SessionEntity> getInfoSessionByNameYear(String semesterName, String year){
+//        Session session = hibernateUtils.getSessionFactory().openSession();
+//        List<SessionEntity> acc = null;
+//        try {
+//            final String hql = "select st from SessionEntity st where st.semesterName= :semesterName and st.year = :year  ";
+//            Query query = session.createQuery(hql);
+//            query.setString("semesterName", semesterName);
+//            query.setString("year", year);
+//            acc = query.list();
+//        }catch (HibernateException ex){
+//            System.err.println(ex);
+//        }finally {
+//            session.close();
+//        }
+//        return  acc;
+//    }
+
+    public static List<SessionEntity> getInfoSessionByIdSemester(int id){
         Session session = hibernateUtils.getSessionFactory().openSession();
         List<SessionEntity> acc = null;
         try {
-            final String hql = "select st from SessionEntity st where st.semesterName= :semesterName and st.year = :year  ";
+            final String hql = "select st from SessionEntity st where st.idSemester =:id ";
             Query query = session.createQuery(hql);
-            query.setString("semesterName", semesterName);
-            query.setString("year", year);
+            query.setInteger("id",id);
             acc = query.list();
         }catch (HibernateException ex){
             System.err.println(ex);
@@ -62,6 +79,29 @@ public class SessionDAO {
             transaction.rollback();;
             System.err.println(e);
         }finally {
+            session.close();
+        }
+        return true;
+    }
+
+    public static boolean DeleteSessionByIdSemester(int id) {
+        Session session = hibernateUtils.getSessionFactory().openSession();
+        List<SessionEntity> c = SessionDAO.getInfoSessionByIdSemester(id);
+        if (c == null) {
+            return false;
+        }
+        Transaction transaction = null;
+        try {
+            transaction = session.beginTransaction();
+            for(SessionEntity s:c) {
+                session.delete(s);
+            }
+            transaction.commit();
+        } catch (HibernateException ex) {
+//Log the exception
+            transaction.rollback();
+            System.err.println(ex);
+        } finally {
             session.close();
         }
         return true;

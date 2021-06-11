@@ -14,5 +14,8 @@
         <property name="id_course">
             <column name="ID_COURSE" sql-type="int(11)"/>
         </property>
+        <property name="dayRegistration">
+            <column name="DAYREGISTRATION" sql-type="datetime"/>
+        </property>
     </class>
 </hibernate-mapping>

@@ -93,7 +93,7 @@ CREATE TABLE `semester` (
 BEGIN;
 INSERT INTO `semester` VALUES (1,'HK1','2019-2020','2019-1-1','2019-5-4',0);
 INSERT INTO `semester` VALUES (2,'HK2','2019-2020','2019-5-5','2019-12-30',0);
-INSERT INTO `semester` VALUES (3,'HK3','2019-2020','2020-1-1','2020-5-4',1);
+INSERT INTO `semester` VALUES (3,'HK2','2020-2021','2021-1-1','2021-12-30',1);
 COMMIT;
 
 -- ----------------------------
@@ -132,13 +132,11 @@ CREATE TABLE `session` (
                            `dateEnd` date,
                            PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-ALTER TABLE `session`
-ADD FOREIGN KEY (`IdSemester`) REFERENCES `semester`(`ID`);
 
 BEGIN;
 INSERT INTO `session` VALUES (1,3,'2020-1-1','2020-1-14');
 INSERT INTO `session` VALUES (2,3,'2020-2-1','2020-2-14');
-INSERT INTO `session` VALUES (3,3,'2020-3-1','2020-3-14');
+INSERT INTO `session` VALUES (3,3,'2021-3-1','2021-12-30');
 COMMIT;
 
 -- ----------------------------
@@ -184,6 +182,7 @@ CREATE TABLE `joincourse` (
                           `ID` int(11) NOT NULL AUTO_INCREMENT,
                           `ID_student` int(11) not null ,
                           `ID_course` int(11) not null ,
+                          `dayRegistration` DATETIME,
                           PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 ALTER TABLE `joincourse`
@@ -192,18 +191,18 @@ ALTER TABLE `joincourse`
 ADD FOREIGN KEY (`ID_course`) REFERENCES `course`(`ID`);
 
 BEGIN;
-INSERT INTO `joincourse` VALUES (1,1,1);
-INSERT INTO `joincourse` VALUES (2,1,2);
-INSERT INTO `joincourse` VALUES (3,1,3);
-INSERT INTO `joincourse` VALUES (4,2,3);
-INSERT INTO `joincourse` VALUES (5,3,3);
-INSERT INTO `joincourse` VALUES (6,3,2);
-INSERT INTO `joincourse` VALUES (7,4,1);
-INSERT INTO `joincourse` VALUES (8,4,2);
-INSERT INTO `joincourse` VALUES (9,4,3);
-INSERT INTO `joincourse` VALUES (10,5,4);
-INSERT INTO `joincourse` VALUES (11,5,5);
-INSERT INTO `joincourse` VALUES (12,5,6);
+INSERT INTO `joincourse` VALUES (1,1,1,'2021-6-10');
+INSERT INTO `joincourse` VALUES (2,1,2,'2021-6-10');
+INSERT INTO `joincourse` VALUES (3,1,3,'2021-6-10');
+INSERT INTO `joincourse` VALUES (4,2,3,'2021-6-10');
+INSERT INTO `joincourse` VALUES (5,3,3,'2021-6-10');
+INSERT INTO `joincourse` VALUES (6,3,2,'2021-6-10');
+INSERT INTO `joincourse` VALUES (7,4,1,'2021-6-10');
+INSERT INTO `joincourse` VALUES (8,4,2,'2021-6-10');
+INSERT INTO `joincourse` VALUES (9,4,3,'2021-6-10');
+INSERT INTO `joincourse` VALUES (10,5,4,'2021-6-10');
+INSERT INTO `joincourse` VALUES (11,5,5,'2021-6-10');
+INSERT INTO `joincourse` VALUES (12,5,6,'2021-6-10');
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;

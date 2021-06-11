@@ -1,6 +1,10 @@
 package com.hibernate;
 
 import javax.persistence.*;
+import java.sql.Date;
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 @Entity
@@ -9,7 +13,15 @@ public class JoinCourseEntity {
     private int id;
     private int id_course;
     private int id_student;
+    private LocalDateTime dayRegistration;
 
+    public LocalDateTime getDayRegistration() {
+        return dayRegistration;
+    }
+
+    public void setDayRegistration(LocalDateTime dayRegistration) {
+        this.dayRegistration = dayRegistration;
+    }
 
 
     @Id

@@ -28,6 +28,41 @@ public class JoinCourseDAO extends CourseDAO {
         return acc;
     }
 
+    public static List<JoinCourseEntity> getAllStudentJoinCourseId(int id){
+        Session session = hibernateUtils.getSessionFactory().openSession();
+        List<JoinCourseEntity> acc = null;
+        try {
+            final String hql = "select st from JoinCourseEntity st where st.id_course= :id  ";
+            Query query = session.createQuery(hql);
+            query.setInteger("id",id);
+            acc = query.list();
+        }
+        catch (HibernateException e){
+            System.err.println(e);
+        }finally {
+            session.close();
+        }
+        return acc;
+    }
+
+    public static List<JoinCourseEntity> getAllStudentJoinCourseIdAndStudentID(int id,int idStudent){
+        Session session = hibernateUtils.getSessionFactory().openSession();
+        List<JoinCourseEntity> acc = null;
+        try {
+            final String hql = "select st from JoinCourseEntity st where st.id_course= :id and st.id_student =:idStudent ";
+            Query query = session.createQuery(hql);
+            query.setInteger("id",id);
+            query.setInteger("idStudent",idStudent);
+            acc = query.list();
+        }
+        catch (HibernateException e){
+            System.err.println(e);
+        }finally {
+            session.close();
+        }
+        return acc;
+    }
+
     public static List<JoinCourseEntity> getAllStudentJoinCourse(String course){
         Session session = hibernateUtils.getSessionFactory().openSession();
         List<CourseEntity> courseEntity = CourseDAO.getInfoCourseById(course);
